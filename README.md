@@ -308,7 +308,7 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
 - 自定义属性接口：CMLoginUiConfig
 
   ```
-    /**
+      /**
        * 设置导航栏属性
        *
        * @param backgroundColor： 导航栏背景色
@@ -318,15 +318,17 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        * @param isTransparent：   导航栏是否透明
        * @return
        */
-      public CMLoginUiConfig setNavigationBar(int backgroundColor, String text, int textColor, String backIconPath, boolean isTransparent)；
-  
+      public CMLoginUiConfig setNavigationBar(int backgroundColor, String text, int textColor, String backIconPath, boolean isTransparent)
+       
       /**
        * 设置授权页背景
        *
        * @param backgroundImagePath： 授权页背景图片路径
        * @return
        */
-      public CMLoginUiConfig setBackgroundImagePath(String backgroundImagePath)；
+      public CMLoginUiConfig setBackgroundImagePath(String backgroundImagePath)
+       
+  
       /**
        * 设置Logo属性
        *
@@ -338,7 +340,7 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        * @param yOffsetBottom： logo相对于底部y偏移
        * @return
        */
-      public CMLoginUiConfig setLogo(String logoImagePath, int width, int height, boolean isHidden, int yOffsetTop, int yOffsetBottom)；
+      public CMLoginUiConfig setLogo(String logoImagePath, int width, int height, boolean isHidden, int yOffsetTop, int yOffsetBottom)
   
       /**
        * 设置手机掩码属性
@@ -349,7 +351,7 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        * @param yOffsetBottom：   号码栏相对于底部y轴偏移
        * @return
        */
-      public CMLoginUiConfig setMobileMaskNumber(int maskNumberColor, int maskNumberSize, int yOffsetTop, int yOffsetBottom)；
+      public CMLoginUiConfig setMobileMaskNumber(int maskNumberColor, int maskNumberSize, int yOffsetTop, int yOffsetBottom) 
   
       /**
        * 设置授权页Slogan属性
@@ -359,8 +361,7 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        * @param yOffsetBottom： slogan相对于底部y偏移
        * @return
        */
-      public CMLoginUiConfig setSlogan(int textColor, int yOffsetTop, int yOffsetBottom)；
-  
+      public CMLoginUiConfig setSlogan(int textColor, int yOffsetTop, int yOffsetBottom)
       /**
        * 设置登录按钮属性
        *
@@ -371,7 +372,8 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        * @param yOffsetBottom：       登录按钮相对于底部y偏移
        * @return
        */
-      public CMLoginUiConfig setLoginButton(String text, int textColor, String backgroundImagePath, int yOffsetTop, int yOffsetBottom)；
+      public CMLoginUiConfig setLoginButton(int width, int height, String text, int textColor,
+                                            String backgroundImagePath, int yOffsetTop, int yOffsetBottom)
   
       /**
        * 设置切换账号相关属性
@@ -382,8 +384,7 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        * @param yOffsetBottom： 切换账号相对于底部y偏移
        * @return
        */
-      public CMLoginUiConfig setSwitchAccount(int textColor, boolean isHidden, int yOffsetTop, int yOffsetBottom)；
-  
+      public CMLoginUiConfig setSwitchAccount(int textColor, boolean isHidden, int yOffsetTop, int yOffsetBottom) 
       /**
        * 设置自定义View属性
        *
@@ -395,7 +396,7 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        * @param customInterface： 自定义View点击事件响应回调
        * @return
        */
-      public CMLoginUiConfig setCustomView(View customView, String viewId, int viewPosition, CustomInterface customInterface)；
+      public CMLoginUiConfig setCustomView(View customView, String viewId, int viewPosition, CustomInterface customInterface)
   
       /**
        * 设置底部隐私栏条款属性
@@ -412,6 +413,8 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
   
       /**
        * 设置底部隐私栏条款属性
+       * 已过时，推荐使用 {@link #setClause(int, int, int, boolean, String, String, int, int, int, int, boolean)}
+       * 与{@link #setClauseText(String, String, String, String, String, String)}代替
        *
        * @param clause：                   开发者隐私条款1名称
        * @param url：                      开发者隐私条款1的Url
@@ -423,9 +426,46 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        * @param protocolUnCheckImagePath： 复选框未选中时图片路径
        * @param yOffsetTop：               隐私条款相对于标题栏下边缘y偏移
        * @param yOffsetBottom：            隐私条款相对于底部y偏移
+       * @param isDefaultChecked：         隐私协议框是否默认勾选
        * @return
        */
-      public CMLoginUiConfig setClause(String clause, String url, String clause2, String clause2Url,int textColor, int protocolColor, String protocolCheckImagePath,String protocolUnCheckImagePath, int yOffsetTop, int yOffsetBottom) 
+      @Deprecated
+      public CMLoginUiConfig setClause(String clause, String url, String clause2, String clause2Url,
+                                       int textColor, int protocolColor, String protocolCheckImagePath,
+                                       String protocolUnCheckImagePath, int yOffsetTop, int yOffsetBottom, boolean isDefaultChecked)
+  
+      /**
+       * 设置底部隐私栏条款属性
+       *
+       * @param textSize                 条款字体大小
+       * @param baseColor                条款文案中非隐私协议部分的颜色
+       * @param protocolColor            条款文案中隐私协议的颜色
+       * @param isGravityCenter          条款是否居中
+       * @param protocolCheckImagePath   复选框选中时图片路径
+       * @param protocolUnCheckImagePath 复选框未选中时图片路径
+       * @param checkBoxWidth            复选框宽度
+       * @param checkBoxHeight           复选框高度
+       * @param yOffsetTop               隐私条款相对于标题栏下边缘y偏移
+       * @param yOffsetBottom            隐私条款相对于底部y偏移
+       * @param isDefaultChecked         隐私协议框是否默认勾选
+       * @return
+       */
+      public CMLoginUiConfig setClause(int textSize, int baseColor, int protocolColor, boolean isGravityCenter,
+                                       String protocolCheckImagePath, String protocolUnCheckImagePath, int checkBoxWidth, int checkBoxHeight,
+                                       int yOffsetTop, int yOffsetBottom, boolean isDefaultChecked) 
+      /**
+       * 设置隐私条款文案
+       *
+       * @param clauseStart 条款开始部分文案，例如“登录即同意”
+       * @param clause      条款一名称
+       * @param url         条款一对应的url
+       * @param clause2     条款二名称
+       * @param clause2Url  条款二对应的url
+       * @param clauseEnd   条款结束文案，例如“并授权使用本机号码登录”
+       * @return
+       */
+      public CMLoginUiConfig setClauseText(String clauseStart, String clause, String url, String clause2, String clause2Url, String clauseEnd)
+      
       /**
        * 设置认证主题配置
        * 如果希望更细化的控制一些配置项，可使用AuthThemeConfig.Builder()的形式来创建主题配置对象，
@@ -435,7 +475,6 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        * AuthThemeConfig config = new AuthThemeConfig.Builder()
        * .setAuthNavTransparent(false)
        * .setNavColor(0xff0086d0)
-       * //.set其他设置选项...
        * .build();
        * CMLoginUiConfig cmLoginUiConfig = new CMLoginUiConfig().setAuthThemeConfig(config);
        * }
@@ -443,9 +482,9 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        *
        * @param authThemeConfig
        */
-      public CMLoginUiConfig setAuthThemeConfig(AuthThemeConfig authThemeConfig) 
+      public CMLoginUiConfig setAuthThemeConfig(AuthThemeConfig authThemeConfig)
   ```
-
+  
 - 自定义选项示例：
 
   ```
@@ -486,11 +525,12 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
    .setAuthNavTransparent(false)
    .setNavColor(Color.RED)
    .setXXX // 省略其他设置项
+   .setPrivacyState(true) // 设置默认勾选协议框
    .build();
    CMLoginUiConfig cmLoginUiConfig2 = new CMLoginUiConfig().setAuthThemeConfig(config);
    login.setCMLoginUiConfig(cmLoginUiConfig2);
   ```
-
+  
   注：更细化的控制接口和自定义属性接口不能混用
 
 #### 2. 联通授权页页面细则与相关自定义接口
@@ -501,20 +541,20 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
 
 - 自定义属性接口：CULoginUiConfig
 
-  ```
-  /**
-       * 设置导航栏配置
-       *
-       * @param backgroundColor：           导航栏背景色
-       * @param backButtonBackgroundResId： 返回按钮背景资源
-       * @param textSize：                  导航栏标题字体大小
-       * @param textColor：                 导航栏标题颜色
-       * @param isBold：                    导航栏标题是否使用粗体
-       * @param isShowLine：                是否显示导航栏底部线条
-       * @return
-       */
-      public CULoginUiConfig setNavigationBar(int backgroundColor, int backButtonBackgroundResId, int textSize,int textColor, boolean isBold, boolean isShowLine) 
-  
+```
+      /**
+      * 设置导航栏配置
+      *
+      * @param backgroundColor：           导航栏背景色
+      * @param backButtonBackgroundResId： 返回按钮背景资源
+      * @param textSize：                  导航栏标题字体大小
+      * @param textColor：                 导航栏标题颜色
+      * @param isBold：                    导航栏标题是否使用粗体
+      * @param isShowLine：                是否显示导航栏底部线条
+      * @return
+      */
+  ​   public CULoginUiConfig setNavigationBar(int backgroundColor, int backButtonBackgroundResId, int textSize,int textColor, boolean isBold, boolean isShowLine) 
+
       /**
        * 设置导航栏配置
        *
@@ -543,7 +583,7 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        * @return
        */
       public CULoginUiConfig setLogo(int resId, int width, int height, boolean isShow, int                                          offsetY) 
-  
+      
       /**
        * 设置应用名称属性
        *
@@ -553,7 +593,7 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        * @return
        */
       public CULoginUiConfig setAppName(boolean isShow, int textColor, int offsetY)
-  
+      
       /**
        * 设置应用名称属性
        *
@@ -565,7 +605,7 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        * @return
        */
       public CULoginUiConfig setAppName(boolean isShow, int textColor, int offsetY, int textSize, boolean isBold)
-  
+      
       /**
        * 设置登录界面的背景
        *
@@ -573,7 +613,7 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        * @return
        */
       public CULoginUiConfig setBackground(int resId)
-  
+      
       /**
        * 设置登录按钮属性
        *
@@ -583,7 +623,7 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        * @return
        */
       public CULoginUiConfig setLoginButton(int width, int height, int offsetY)
-  
+      
       /**
        * 设置登录按钮属性
        *
@@ -594,7 +634,7 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        * @return
        */
       public CULoginUiConfig setLoginButton(int width, int height, int offsetY, String text)
-  
+      
       /**
        * 设置登录按钮属性
        *
@@ -608,7 +648,7 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        */
       public CULoginUiConfig setLoginButton(int width, int height, int offsetY, String text,
                                             int protocolCheckRes, int protocolUnCheckRes)
-  
+      
       /**
        * 设置本机脱敏号码属性
        *
@@ -617,7 +657,7 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        * @return
        */
       public CULoginUiConfig setMobileMaskNumber(int textColor, int offsetY)
-  
+      
       /**
        * 设置本机脱敏号码属性
        *
@@ -627,7 +667,7 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        * @return
        */
       public CULoginUiConfig setMobileMaskNumber(int textColor, int textSize, int offsetY)
-  
+      
       /**
        * 设置本机脱敏号码属性
        *
@@ -638,7 +678,7 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        * @return
        */
       public CULoginUiConfig setMobileMaskNumber(int textColor, int textSize, int offsetY,                                                      boolean bold)
-  
+      
       /**
        * 设置认证服务品牌属性，即《中国联通服务提供认证》文案的相关属性
        *
@@ -648,7 +688,7 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        * @return
        */
       public CULoginUiConfig setBrand(int color, int offsetY, boolean isShow
-  
+      
       /**
        * 设置其他登录方式属性
        *
@@ -679,7 +719,7 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        * @return
        */
       public CULoginUiConfig setShowLoading(boolean isShowLoading)
-  
+      
       /**
        * 设置登录界面Loading框的提示文案
        *
@@ -687,7 +727,7 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        * @return
        */
       public CULoginUiConfig setLoadingTip(String loadingTip)
-  
+      
       /**
        * 设置登录界面Loading属性
        *
@@ -699,7 +739,7 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        * @return
        */
       public CULoginUiConfig setLoading(String loadingTip, int width, int height, int textSize,                                         int textColor)
-  
+      
       /**
        * 设置登录界面Loading属性
        *
@@ -712,7 +752,7 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        * @return
        */
       public CULoginUiConfig setLoading(String loadingTip, int width, int height, int textSize,                                         int textColor, boolean isShow)
-  
+      
       /**
        * 设置登录界面Loading属性
        *
@@ -727,7 +767,7 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        */
       public CULoginUiConfig setLoading(String loadingTip, int width, int height, int textSize,
                                         int textColor, boolean isShow, int backgroundResource)
-  
+      
       /**
        * 设置协议属性
        * 要完成该操作需要在aar包中将布局文件复制粘贴至接入方项目，在xml中添加控件后，
@@ -747,7 +787,7 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
       public CULoginUiConfig setProtocol(int offsetY, int textColor, int textSize,
                                      String protocolId, String protocolText, String protocolLink,
                                      String protocol2Id, String protocol2Text, String                                                protocol2Link)
-  
+      
       /**
        * 设置协议属性
        * 要完成该操作需要在aar包中将布局文件复制粘贴至接入方项目，在xml中添加控件后，
@@ -837,7 +877,7 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        * @return
        */
       public CULoginUiConfig setShowProtocolBox(boolean isShowProtocolBox)
-  
+      
       /**
        * 设置其它登录按钮的点击事件监听
        *
@@ -845,7 +885,7 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        * @return
        */
       public CULoginUiConfig setOtherLoginListener(OnCustomViewListener customViewListener)
-  
+      
       /**
        * 设置自定义控件区的事件监听
        *
@@ -854,11 +894,11 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
        * @return
        */
       public CULoginUiConfig setCustomViewListener(String customViewId, OnCustomViewListener                                                      customViewListener)
-  ```
+```
 
 - 自定义选项示例
 
-    ```
+  ```
     // 以下所有接口中，如果某个参数不打算修改默认值，int类型传0值，String类型传null即可
     CULoginUiConfig cuLoginUiConfig = new CULoginUiConfig()
             // 设置导航栏属性
@@ -902,12 +942,12 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
             // 设置隐私协议属性
             .setProtocol(20, Color.BLACK, 12, "custom_protocol_1", "自定义条款协议名称1", "https://www.baidu.com", "custom_protocol_2", "自定义条款协议名称2", "https://www.baidu.com");
     login.setCULoginUiConfig(cuLoginUiConfig);
-    ```
-    
+  ```
+  
     更细化的自定义选项
-    
+  
     根据自定义属性需求创建相应对象，如导航栏NavigationBar，Logo，隐私协议Protocol等，可设置的属性对象请参看前面授权页面细则部分，然后调用其内置的属性设置方法，下面是简单示例：
-    
+  
     ```
       // 更细化的控制，单独设置每一项
       UiConfig uiConfig = new UiConfig(); // 创建UI配置对象
@@ -936,9 +976,115 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
       }
       });
       login.setCULoginUiConfig(cuLoginUiConfig2); // 设置UI配置
-  ```
+    ```
   
-    注：更细化的控制接口和自定义属性接口不能混用
+    注：更细化的控制接口和自定义属性接口不能混
+
+
+
+#### 3.移动授权页面使用弹窗模式
+
+通过注册Activity的生命周期的监听，在授权页面打开的时候，获取window，设置window的属性，来
+设置弹窗模式，代码示例如下
+
+1.为授权界面的activity设置弹窗theme主题
+
+  ```
+ <activity
+     android:name="com.cmic.sso.sdk.activity.LoginAuthActivity"
+     android:configChanges="keyboardHidden|orientation|screenSize"
+     android:launchMode="singleTop"
+     android:screenOrientation="behind"
+     android:theme="@style/Theme.ActivityDialogStyle"/>
+  ```
+
+2.设置theme主题的style样式
+
+```
+ <style name="Theme.ActivityDialogStyle" parent="Theme.AppCompat.Light.NoActionBar">
+          <!--背景透明-->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+          <!--dialog的整个屏幕的背景是否有遮障层-->
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+```
+
+3.在Application中注册activity的生命周期
+
+```
+registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
+            @Override
+            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+
+            }
+    
+            @Override
+            public void onActivityStarted(Activity activity) {
+    
+            }
+    
+            @Override
+            public void onActivityResumed(Activity activity) {
+                if (activity.getClass().getName().contains("LoginAuthActivity")) {
+                    DisplayMetrics dm = new DisplayMetrics();
+                    activity.getWindow().getWindowManager().getDefaultDisplay().getMetrics(dm);
+                    WindowManager.LayoutParams p = activity.getWindow().getAttributes();
+                    //设置window大小
+                    p.height = (int) (dm.heightPixels * 0.4);
+                    p.width = (int) (dm.widthPixels);
+                    //设置window位置
+                    p.gravity = Gravity.BOTTOM;
+                    activity.getWindow().setAttributes(p);
+                }
+            }
+    
+            @Override
+            public void onActivityPaused(Activity activity) {
+    
+            }
+    
+            @Override
+            public void onActivityStopped(Activity activity) {
+    
+            }
+    
+            @Override
+            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+    
+            }
+    
+            @Override
+            public void onActivityDestroyed(Activity activity) {
+    
+            }
+        });
+```
+
+### 监听用户取消一键登录
+
+在调用onePass接口时传入的QuickLoginTokenListener回调参数中重写onCancelGetToken方法，该方法即表示用户放弃一键登录
+
+```
+ login.onePass(new QuickLoginTokenListener() {
+    @Override
+    public void onGetTokenSuccess(final String YDToken, final String accessCode) {
+        Log.d(TAG, String.format("yd token is:%s accessCode is:%s", YDToken, accessCode));
+    }
+    
+    @Override
+    public void onGetTokenError(String YDToken, String msg) {
+        Log.d(TAG, "获取运营商token失败:" + msg);
+    }
+
+    @Override
+    public void onCancelGetToken() {
+        Log.d(TAG, "用户取消登录");
+    }
+ });
+```
+
+
 
 ### 防混淆配置
 
@@ -1003,7 +1149,7 @@ public class LoginActivity extends AppCompatActivity {
     private QuickLogin login;
     private boolean isUsedCustomCUUi = true;//是否使用自定义的联通登录界面
     private boolean isUsedCustomCMUi = true;//是否使用自定义的移动登录界面
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -1023,10 +1169,10 @@ public class LoginActivity extends AppCompatActivity {
         btnOnePass = findViewById(R.id.btn_one_pass);
         getPreMobileNumber();
     }
-
+    
     private void initArgs() {
         if (isTest) {
-            // BUSINESS_ID = "35d60d532b4f4c4c84f3e243c1989a27"; // 本机校验
+            //BUSINESS_ID = "35d60d532b4f4c4c84f3e243c1989a27"; // 本机校验
             BUSINESS_ID = "3cc9408f47414f03a75947c108e60034"; // 一键登录
             mSecretKey = "abf908daf58a9737a9205142b81e1606";
             mSecretId = "e535e1074974d472a12f5d6e55e521bc";
@@ -1041,7 +1187,7 @@ public class LoginActivity extends AppCompatActivity {
             mOnePassUrl = "http://ye.dun.163yun.com/v1/oneclick/check";
         }
     }
-
+    
     private void mobileNumberVerify(String mobileNumber) {
         // 本机校验获取token
         login.getToken(mobileNumber, new QuickLoginTokenListener() {
@@ -1050,7 +1196,7 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d(TAG, "获取的扩展字段内容为:" + extendMsg.toString());
                 return super.onExtendMsg(extendMsg);
             }
-
+    
             @Override
             public void onGetTokenSuccess(final String YDToken, final String accessCode) {
                 runOnUiThread(new Runnable() {
@@ -1061,20 +1207,21 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
             }
-
+    
             @Override
             public void onGetTokenError(final String YDToken, final String msg) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getApplicationContext(), "获取Token失败" + YDToken + msg, Toast.LENGTH_LONG).show();
+                        Log.e(TAG, "获取Token失败,yd toke is:" + YDToken + " msg is:" + msg);
+                        Toast.makeText(getApplicationContext(), "获取Token失败,yd toke is:" + YDToken + " msg is:" + msg, Toast.LENGTH_LONG).show();
                     }
                 });
-
+    
             }
         });
     }
-
+    
     private void getPreMobileNumber() {
         // 预取号与一键登录
         JSONObject extData = new JSONObject();
@@ -1090,6 +1237,7 @@ public class LoginActivity extends AppCompatActivity {
         if (isUsedCustomCMUi) {
             setCMLoginUi();
         }
+        login.setDebugMode(true);
         login.setExtendData(extData);
         login.prefetchMobileNumber(new QuickLoginPreMobileListener() {
             @Override
@@ -1098,28 +1246,33 @@ public class LoginActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        login.onePass(new QuickLoginTokenListener() {
+                        tvMobileNumber.setText(mobileNumber);
+                        btnOnePass.setOnClickListener(new View.OnClickListener() {
                             @Override
-                            public void onGetTokenSuccess(final String YDToken, final String accessCode) {
-                                Log.d(TAG, String.format("yd token is:%s accessCode is:%s", YDToken, accessCode));
-                                tokenValidate(YDToken, accessCode, true);
-                            }
-
-                            @Override
-                            public void onGetTokenError(String YDToken, String msg) {
-                                Log.d(TAG, "获取运营商token失败:" + msg);
-                            }
-
-                            @Override
-                            public boolean onExtendMsg(JSONObject extendMsg) {
-                                return super.onExtendMsg(extendMsg);
+                            public void onClick(View v) {
+                                login.onePass(new QuickLoginTokenListener() {
+                                    @Override
+                                    public void onGetTokenSuccess(final String YDToken, final String accessCode) {
+                                        Log.d(TAG, String.format("yd token is:%s accessCode is:%s", YDToken, accessCode));
+                                        tokenValidate(YDToken, accessCode, true);
+                                    }
+    
+                                    @Override
+                                    public void onGetTokenError(String YDToken, String msg) {
+                                        Log.d(TAG, "获取运营商token失败:" + msg);
+                                    }
+    
+                                    @Override
+                                    public boolean onExtendMsg(JSONObject extendMsg) {
+                                        return super.onExtendMsg(extendMsg);
+                                    }
+                                });
                             }
                         });
-
                     }
                 });
             }
-
+    
             @Override
             public void onGetMobileNumberError(String YDToken, final String msg) {
                 Log.e(TAG, "[onGetMobileNumberError]callback error msg is:" + msg);
@@ -1132,18 +1285,18 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-
+    
     private void setCULoginUi() {
         // 以下所有接口中，如果某个参数不打算修改默认值，int类型传0值，String类型传null即可
         CULoginUiConfig cuLoginUiConfig = new CULoginUiConfig()
                 // 设置导航栏属性
-                .setNavigationBar(Color.RED, 0, 20, Color.BLACK, true, false)
+                .setNavigationBar(Color.WHITE, 0, 20, Color.BLACK, true, false)
                 // 设置Logo属性
                 .setLogo(R.drawable.ic_launcher_background, 100, 100, true, 40)
-                // 设置App名熟悉
+                // 设置App名属性
                 .setAppName(true, Color.BLACK, 100)
                 // 设置登录按钮属性
-                .setLoginButton(800, 100, 100, "一键登录/注册")
+                .setLoginButton(500, 100, 100, "一键登录/注册")
                 // 设置手机掩码属性
                 .setMobileMaskNumber(Color.BLACK, 20, 40)
                 // 设置品牌商属性
@@ -1151,12 +1304,21 @@ public class LoginActivity extends AppCompatActivity {
                 // 设置其它登录按钮属性
                 .setOtherLogin("其它方式登录", Color.RED, true, true, 0)
                 .setLoading("正在加载，请稍后...", 100, 200, 15, Color.BLUE, true)
+                .setViewsVisibility(new String[]{"btn_right"}, new boolean[]{true})
+                .setViewsText(new String[]{ConstantCucc.OAUTH_TITLE}, new String[]{"一键登录/注册"})
+                // .setViewsTextColor(new String[]{ConstantCucc.OAUTH_CONTENT}, new int[]{0xAC5FF9})
                 .setShowProtocolBox(true)
                 // 设置其它登录监听
                 .setOtherLoginListener(new OnCustomViewListener() {
                     @Override
                     public void onClick(View view, UiHandler uiHandler) {
                         Toast.makeText(getApplicationContext(), "点击了其他登录按钮", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setCustomViewListener("btn_right", new OnCustomViewListener() {
+                    @Override
+                    public void onClick(View view, UiHandler uiHandler) {
+                        Toast.makeText(getApplicationContext(), "点击了右上角跳过按钮", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setCustomViewListener("custom_view_id", new OnCustomViewListener() {
@@ -1168,8 +1330,8 @@ public class LoginActivity extends AppCompatActivity {
                 // 设置隐私协议属性
                 .setProtocol(20, Color.BLACK, 12, "custom_protocol_1", "自定义条款协议名称1", "https://www.baidu.com", "custom_protocol_2", "自定义条款协议名称2", "https://www.baidu.com");
         login.setCULoginUiConfig(cuLoginUiConfig);
-
-//        // 更细化的控制，单独设置每一项
+    
+        // 更细化的控制，单独设置每一项
 //        UiConfig uiConfig = new UiConfig();
 //        NavigationBar navigationBar = new NavigationBar();
 //        navigationBar.setText("登录/注册");
@@ -1177,9 +1339,14 @@ public class LoginActivity extends AppCompatActivity {
 //        uiConfig.setNavigationBar(navigationBar);
 //        Logo logo = new Logo();
 //        logo.setShow(true);
-//        logo.setWidth(80);
+//        logo.setWidth(100);
 //        logo.setHeight(80);
 //        uiConfig.setLogo(logo);
+//        LoginButton loginButton = new LoginButton();
+//        loginButton.setWidth(308);
+//        loginButton.setHeight(100);
+//        loginButton.setText("本机号码一键绑定");
+//        uiConfig.setLoginButton(loginButton);
 //        Protocol protocol = new Protocol();
 //        protocol.setCustomProtocol1_id("custom_protocol_1");
 //        protocol.setCustomProtocol1_text("自定义条款协议名称1");
@@ -1208,13 +1375,13 @@ public class LoginActivity extends AppCompatActivity {
                 // 设置导航栏属性
                 .setNavigationBar(Color.RED, "登录/注册", Color.WHITE, "back", false)
                 // 设置Logo属性
-                .setLogo("ico_logo", 100, 100, false, 100, 0)
+                .setLogo("ico_logo", 100, 100, true, 100, 0)
                 // 设置预取号掩码属性
                 .setMobileMaskNumber(Color.BLACK, 20, 170, 0)
                 // 设置Slogan属性
                 .setSlogan(Color.BLACK, 200, 0)
                 // 设置登录按钮属性
-                .setLoginButton("一键登录/注册", Color.WHITE, null, 380, 0)
+                .setLoginButton(100, 50, "一键登录/注册", Color.WHITE, null, 380, 0)
                 // 设置动态添加自定义View属性
                 .setCustomView(otherLoginView, "R.layout.layout_custom_view", AuthRegisterViewConfig.RootViewId.ROOT_VIEW_ID_BODY, new CustomInterface() {
                     @Override
@@ -1222,24 +1389,31 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(context, "点击了动态注册的View", Toast.LENGTH_SHORT).show();
                     }
                 })
+                // 设置隐私条款文案
+                .setClauseText("登录即同意", "自定义条款协议名称1", "https://www.baidu.com", "自定义条款协议名称2", "https://www.baidu.com", "授权登录")
                 // 设置隐私条款属性
-                .setClause("自定义条款协议名称1", "https://www.baidu.com", "自定义条款协议名称2", "https://www.baidu.com",
-                        Color.BLACK, Color.RED, "checkbox_true", "checkbox_false", 0, 10);
+                .setClause(10, Color.BLACK, Color.RED, true, "checkbox_true", "checkbox_false", 15, 15, 0, 10, true);
+    
         login.setCMLoginUiConfig(cmLoginUiConfig);
 
 //        // 更细化的控制,单独设置每一项
 //        AuthThemeConfig config = new AuthThemeConfig.Builder()
 //                .setAuthNavTransparent(false)
-//                .setNavColor(Color.RED)
+//                .setLogoHidden(true)
+//                .setSloganOffsetY_B(-100)
+//                .setNumFieldOffsetY(50)
+//                .setLogBtnOffsetY(105)
+//                .setNavColor(Color.BLUE)
+//                .setPrivacyState(true) // 协议框默认勾选
 //                .build();
 //        CMLoginUiConfig cmLoginUiConfig2 = new CMLoginUiConfig().setAuthThemeConfig(config);
 //        login.setCMLoginUiConfig(cmLoginUiConfig2);
 
     }
-
-    //本机校验
+    
+    // token校验，接入者应该将该操作放到自己服务端
     private void tokenValidate(String token, String accessCode, final boolean isOnePass) {
-
+    
         String nonce = Utils.getRandomString(32);
         String timestamp = String.valueOf(System.currentTimeMillis());
         //生成签名信息
@@ -1255,7 +1429,7 @@ public class LoginActivity extends AppCompatActivity {
             map.put("phone", mMobileNumber);
         }
         String sign = Utils.generateSign(mSecretKey, map);
-
+    
         StringBuffer sburl = new StringBuffer();
         if (isOnePass) {
             sburl.append(mOnePassUrl);
@@ -1300,7 +1474,7 @@ public class LoginActivity extends AppCompatActivity {
                                 Utils.showToast(LoginActivity.this, "无法确认校验是否通过");
                             }
                         }
-
+    
                     } else {
                         String tip = isOnePass ? "一键登录校验token失败：" : "本机校验token失败：";
                         Utils.showToast(LoginActivity.this, tip + j.toString());
@@ -1310,14 +1484,14 @@ public class LoginActivity extends AppCompatActivity {
                     Log.e(QuickLogin.TAG, "error:" + e.toString());
                 }
             }
-
+    
             @Override
             public void onError(String errorCode, String msg) {
                 Log.e(QuickLogin.TAG, "校验token出现错误" + msg);
             }
         });
     }
-
+    
     /**
      * 将dp值转换为px值
      *
