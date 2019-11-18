@@ -139,6 +139,8 @@ public void setExtendData(JSONObject extendData) // 设置扩展数据
 public boolean onExtendMsg(JSONObject extendMsg) // 当用户自定义预取Url后，如果在自己业务后端判断调用非法，可直接调用该接口返回false实现快速降级，以及获取自己业务后端处理后返回的数据
 public void setCULoginUiConfig(CULoginUiConfig cuLoginUiConfig) // 设置联通一键登录页面自定义属性，详细可配置信息{@link CULoginUiConfig}
 public void setCMLoginUiConfig(CMLoginUiConfig cmLoginUiConfig) // 设置移动一键登录页面自定义属性，详细可配置信息{@link CMLoginUiConfig}
+public void setPrefetchNumberTimeout(int timeout) // 设置预取号超时时间，单位s
+public void setFetchNumberTimeout(int timeout)    // 设置取号超时时间，单位s
 ```
 
 
@@ -978,7 +980,7 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
       login.setCULoginUiConfig(cuLoginUiConfig2); // 设置UI配置
     ```
   
-    注：更细化的控制接口和自定义属性接口不能混
+    注：更细化的控制接口和自定义属性接口不能混用
 
 
 
