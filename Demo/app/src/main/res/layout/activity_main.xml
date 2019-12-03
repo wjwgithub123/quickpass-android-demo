@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="16dp"
+    android:paddingTop="16dp"
+    android:paddingRight="16dp"
+    android:paddingBottom="16dp"
+    tools:context=".LoginActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="功能说明:\n一键登录：先预取号，预取号成功后可一键登录\n 本机校验：输入手机号码后进行本机校验" />
+
+    <TextView
+        android:id="@+id/tv_mobile_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="电信号码预取号成功后会在此展示手机掩码" />
+
+    <Button
+        android:id="@+id/btn_prefetch_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="预取号" />
+
+    <Button
+        android:id="@+id/btn_one_pass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="一键登录" />
+
+    <EditText
+        android:id="@+id/et_mobile_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="phone" />
+
+    <Button
+        android:id="@+id/btn_verify"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="本机校验" />
+
+</LinearLayout>
