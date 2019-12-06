@@ -1191,7 +1191,7 @@ RegisterManager.getInstance().setCustomViewListener("customId", new OnCustomView
 
 ## 体验Demo下载
 
-扫描二维码下载体验Demo
+扫描二维码下载体验Demo  
 ![cu](./pic/download.png)
 
 ## Demo代码示例
