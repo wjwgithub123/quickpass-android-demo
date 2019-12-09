@@ -13,7 +13,6 @@ dependencies {
     implementation(name: 'Ui-factory_oauth_mobile_3.8.3', ext: 'aar')
     implementation(name: 'CTAccount_sdk_api_v3.7.0_all', ext: 'aar')
     implementation 'com.google.code.gson:gson:2.8.5'    // 配置对gson的依赖
-    implementation 'com.squareup.okhttp3:okhttp:3.3.1'  // 配置对okhttp的依赖
 }
 ```
 然后在app的build.gradle的android下添加
