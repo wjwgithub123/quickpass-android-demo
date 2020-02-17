@@ -40,7 +40,7 @@ QuickLogin login = QuickLogin.getInstance(getApplicationContext(), BUSINESS_ID);
 login.prefetchMobileNumber(new QuickLoginPreMobileListener() {
         @Override
         public void onGetMobileNumberSuccess(String YDToken, final String mobileNumber) {
-         // 注:对于联通和移动而言，因必须使用运营商界面，因此无需关心mobileNumber，对于移动和联通而言该值会返回null，直接在该回调中调用取号接口onePass即可
+         // 注:对于3网UI统一版本SDK，即2.0.0及以后版本，直接在该回调中调用取号接口onePass即可
         }
 
         @Override
@@ -118,17 +118,15 @@ public void getToken(final String mobileNumber, final QuickLoginTokenListener li
 #### 5判断运营商类型
 
 ```
-public static QuickLogin.OperatorType getOperatorType(Context context) // 获取运营商类型
-返回值为枚举OperatorType，具体含义如下
- enum OperatorType {
-        TYPE_CM(0, "移动"),
-        TYPE_CU(1, "联通"),
-        TYPE_CT(2, "电信"),
-        TYPE_WIFI(3, "wifi"),
-        TYPE_UNKNOWN(4, "未知");
-        OperatorType(int type, String tip) {
-        }
-    }
+/**
+* @param context
+* @return int类型，标识运营商类型，具体含义如下
+* 1:      电信
+* 2:      移动
+* 3:      联通
+* 5:      未知
+*/
+public int getOperatorType(Context context) 
 ```
 #### 6 其他接口
 
@@ -136,8 +134,7 @@ public static QuickLogin.OperatorType getOperatorType(Context context) // 获取
 public void setPreCheckUrl(String url) // 设置预取url接口
 public void setExtendData(JSONObject extendData) // 设置扩展数据
 public boolean onExtendMsg(JSONObject extendMsg) // 当用户自定义预取Url后，如果在自己业务后端判断调用非法，可直接调用该接口返回false实现快速降级，以及获取自己业务后端处理后返回的数据
-public void setCULoginUiConfig(CULoginUiConfig cuLoginUiConfig) // 设置联通一键登录页面自定义属性，详细可配置信息{@link CULoginUiConfig}
-public void setCMLoginUiConfig(CMLoginUiConfig cmLoginUiConfig) // 设置移动一键登录页面自定义属性，详细可配置信息{@link CMLoginUiConfig}
+public void setUnifyUiConfig(UnifyUiConfig uiConfig) // 设置一键登录页面自定义属性，详细可配置信息{@link UnifyUiConfig#Builder}
 public void setPrefetchNumberTimeout(int timeout) // 设置预取号超时时间，单位s
 public void setFetchNumberTimeout(int timeout)    // 设置取号超时时间，单位s
 ```
@@ -214,7 +211,7 @@ QuickLogin login = QuickLogin.getInstance(getApplicationContext(),
 login.prefetchMobileNumber(new QuickLoginPreMobileListener() {
         @Override
         public void onGetMobileNumberSuccess(String YDToken, final String mobileNumber) {
-        // 在该成功回调中能够获取到此次请求的易盾token以及预取号获取的手机掩码
+        // 在该成功回调中直接调用onePass接口进行一键登录即可
         }
 
         @Override
@@ -284,7 +281,7 @@ login.getToken(mobileNumber, new QuickLoginTokenListener() {
     }
 });
 ```
-#### 2.3 使用自定义PreCheck接口与扩展字段功能
+#### 2.3 使用自定义preCheck接口与扩展字段功能
 如果接入者需要接管preCheck过程做自己的一些业务逻辑，可以使用如下方式
 ```
 login.setPreCheckUrl(customUrl); // 使用自定义url代理preCheck接口
@@ -298,772 +295,241 @@ JSONObject extData = new JSONObject();
 login.setExtendData(extData); // 如果自定义url需要接受一些自己的业务参数，通过该接口进行设置
 ```
 ## 自定义登录界面属性
-对于联通和移动而言，因为必须使用运营商的登录界面，为此我们提供了一些开放接口用来让您可以在运营商界面的基础上进行相关UI元素的调整与配置。
+由于运营商的要求，一键登录必须使用运营商的登录界面，为此我们提供了一些开放接口用来让您在运营商界面的基础上进行相关UI元素的调整与配置。
 
-**注意：移动相关自定义接口中的图片资源和样式资源需要放到drawable目录下，相关自定义接口的资源名称为drawable目录下资源的名称**，可参看github上[Demo示例工程](https://github.com/yidun/quickpass-android-demo/tree/master/Demo)
+### 1. 设计规范
+#### 1.1 规范示意图
+![安卓规范示意图](./pic/安卓规范示意图.jpg)
 
-### 1. 移动授权页页面细则与相关自定义接口
+#### 1.2  易盾自定义展示样例
+![自定义展示图](./pic/自定义展示图.jpg)
 
-- 授权页面细则
+### 2. 自定义UI配置接口
 
-  ![cm](./pic/cm.png)
+#### 2.1 UI设置接口
 
-- 自定义属性接口：CMLoginUiConfig
+```
+public void setUnifyUiConfig(UnifyUiConfig uiConfig)
+```
 
-  ```
-      /**
-       * 设置导航栏属性
-       *
-       * @param backgroundColor： 导航栏背景色
-       * @param text：            导航栏标题文本
-       * @param textColor：       导航栏标题文字颜色
-       * @param backIconPath：    导航栏返回按钮图标
-       * @param isTransparent：   导航栏是否透明
-       * @return
-       */
-      public CMLoginUiConfig setNavigationBar(int backgroundColor, String text, int textColor, String backIconPath, boolean isTransparent)
-       
-      /**
-       * 设置授权页背景
-       *
-       * @param backgroundImagePath： 授权页背景图片路径
-       * @return
-       */
-      public CMLoginUiConfig setBackgroundImagePath(String backgroundImagePath)
-       
-  
-      /**
-       * 设置Logo属性
-       *
-       * @param logoImagePath： logo图片路径
-       * @param width：         logo宽度
-       * @param height：        logo高度
-       * @param isHidden:      是否隐藏logo
-       * @param yOffsetTop：    logo相对于标题栏下边缘y轴偏移（单位：dp）
-       * @param yOffsetBottom： logo相对于底部y偏移
-       * @return
-       */
-      public CMLoginUiConfig setLogo(String logoImagePath, int width, int height, boolean isHidden, int yOffsetTop, int yOffsetBottom)
-  
-      /**
-       * 设置手机掩码属性
-       *
-       * @param maskNumberColor： 手机掩码字体颜色
-       * @param maskNumberSize：  手机掩码字体大小
-       * @param yOffsetTop：      掩码栏相对于标题栏下边缘y轴偏移
-       * @param yOffsetBottom：   号码栏相对于底部y轴偏移
-       * @return
-       */
-      public CMLoginUiConfig setMobileMaskNumber(int maskNumberColor, int maskNumberSize, int yOffsetTop, int yOffsetBottom) 
-  
-      /**
-       * 设置授权页Slogan属性
-       *
-       * @param textColor：     slogan文字颜色
-       * @param yOffsetTop：    slogan相对于标题栏下边缘y偏移
-       * @param yOffsetBottom： slogan相对于底部y偏移
-       * @return
-       */
-      public CMLoginUiConfig setSlogan(int textColor, int yOffsetTop, int yOffsetBottom)
-      /**
-       * 设置登录按钮属性
-       *
-       * @param text：                登录按钮文字
-       * @param textColor：           登录按钮文字颜色
-       * @param backgroundImagePath： 登录按钮背景图片路径
-       * @param yOffsetTop：          登录按钮相对于标题栏下边缘y偏移
-       * @param yOffsetBottom：       登录按钮相对于底部y偏移
-       * @return
-       */
-      public CMLoginUiConfig setLoginButton(int width, int height, String text, int textColor,
-                                            String backgroundImagePath, int yOffsetTop, int yOffsetBottom)
-  
-      /**
-       * 设置切换账号相关属性
-       *
-       * @param textColor：     切换账号字体颜色
-       * @param isHidden：      是否隐藏“切换账号”
-       * @param yOffsetTop：    切换账号相对于标题栏下边缘y偏移
-       * @param yOffsetBottom： 切换账号相对于底部y偏移
-       * @return
-       */
-      public CMLoginUiConfig setSwitchAccount(int textColor, boolean isHidden, int yOffsetTop, int yOffsetBottom) 
-      /**
-       * 设置自定义View属性
-       *
-       * @param customView：      自定义View
-       * @param viewId：          自定义View的layout布局id
-       * @param viewPosition：    自定义View放置在登录界面的位置，值包含以下2类
-       *                         1） RootViewId.ROOT_VIEW_ID_TITLE_BAR，标题栏
-       *                         2）RootViewId.ROOT_VIEW_ID_BODY，授权页空白处
-       * @param customInterface： 自定义View点击事件响应回调
-       * @return
-       */
-      public CMLoginUiConfig setCustomView(View customView, String viewId, int viewPosition, CustomInterface customInterface)
-  
-      /**
-       * 设置底部隐私栏条款属性
-       *
-       * @param textColor：                隐私栏文字颜色
-       * @param protocolColor：            隐私栏协议颜色
-       * @param protocolCheckImagePath：   复选框选中时图片路径
-       * @param protocolUnCheckImagePath： 复选框未选中时图片路径
-       * @param yOffsetTop：               隐私条款相对于标题栏下边缘y偏移
-       * @param yOffsetBottom：            隐私条款相对于底部y偏移
-       * @return
-       */
-      public CMLoginUiConfig setClause(int textColor, int protocolColor, String protocolCheckImagePath,String protocolUnCheckImagePath, int yOffsetTop, int yOffsetBottom)
-  
-      /**
-       * 设置底部隐私栏条款属性
-       * 已过时，推荐使用 {@link #setClause(int, int, int, boolean, String, String, int, int, int, int, boolean)}
-       * 与{@link #setClauseText(String, String, String, String, String, String)}代替
-       *
-       * @param clause：                   开发者隐私条款1名称
-       * @param url：                      开发者隐私条款1的Url
-       * @param clause2：                  开发者隐私条款2名称
-       * @param clause2Url：               开发者隐私条款2的Url
-       * @param textColor：                隐私栏文字颜色
-       * @param protocolColor：            隐私栏协议颜色
-       * @param protocolCheckImagePath：   复选框选中时图片路径
-       * @param protocolUnCheckImagePath： 复选框未选中时图片路径
-       * @param yOffsetTop：               隐私条款相对于标题栏下边缘y偏移
-       * @param yOffsetBottom：            隐私条款相对于底部y偏移
-       * @param isDefaultChecked：         隐私协议框是否默认勾选
-       * @return
-       */
-      @Deprecated
-      public CMLoginUiConfig setClause(String clause, String url, String clause2, String clause2Url,
-                                       int textColor, int protocolColor, String protocolCheckImagePath,
-                                       String protocolUnCheckImagePath, int yOffsetTop, int yOffsetBottom, boolean isDefaultChecked)
-  
-      /**
-       * 设置底部隐私栏条款属性
-       *
-       * @param textSize                 条款字体大小
-       * @param baseColor                条款文案中非隐私协议部分的颜色
-       * @param protocolColor            条款文案中隐私协议的颜色
-       * @param isGravityCenter          条款是否居中
-       * @param protocolCheckImagePath   复选框选中时图片路径
-       * @param protocolUnCheckImagePath 复选框未选中时图片路径
-       * @param checkBoxWidth            复选框宽度
-       * @param checkBoxHeight           复选框高度
-       * @param yOffsetTop               隐私条款相对于标题栏下边缘y偏移
-       * @param yOffsetBottom            隐私条款相对于底部y偏移
-       * @param isDefaultChecked         隐私协议框是否默认勾选
-       * @return
-       */
-      public CMLoginUiConfig setClause(int textSize, int baseColor, int protocolColor, boolean isGravityCenter,
-                                       String protocolCheckImagePath, String protocolUnCheckImagePath, int checkBoxWidth, int checkBoxHeight,
-                                       int yOffsetTop, int yOffsetBottom, boolean isDefaultChecked) 
-      /**
-       * 设置隐私条款文案
-       *
-       * @param clauseStart 条款开始部分文案，例如“登录即同意”
-       * @param clause      条款一名称
-       * @param url         条款一对应的url
-       * @param clause2     条款二名称
-       * @param clause2Url  条款二对应的url
-       * @param clauseEnd   条款结束文案，例如“并授权使用本机号码登录”
-       * @return
-       */
-      public CMLoginUiConfig setClauseText(String clauseStart, String clause, String url, String clause2, String clause2Url, String clauseEnd)
-      
-      /**
-       * 设置认证主题配置
-       * 如果希望更细化的控制一些配置项，可使用AuthThemeConfig.Builder()的形式来创建主题配置对象，
-       * 然后调用该接口设置主题对象，示例如下：
-       * <p>
-       * {@code
-       * AuthThemeConfig config = new AuthThemeConfig.Builder()
-       * .setAuthNavTransparent(false)
-       * .setNavColor(0xff0086d0)
-       * .build();
-       * CMLoginUiConfig cmLoginUiConfig = new CMLoginUiConfig().setAuthThemeConfig(config);
-       * }
-       * </p>
-       *
-       * @param authThemeConfig
-       */
-      public CMLoginUiConfig setAuthThemeConfig(AuthThemeConfig authThemeConfig)
-  ```
-  
-- 自定义选项示例：
+uiConfig表示3网统一的UI配置对象，以下是一个简单示例：
+
+```
+QuickLogin.getInstance(getApplicationContext(),onePassId).setUnifyUiConfig(QuickLoginUiConfig.getUiConfig(getApplicationContext()));
+```
+
+详细UI配置示例可参考Demo代码示例中QuickLoginUiConfig类代码
+
+#### 2.2 可配置元素及其接口
+
+**注意：**
+
+- 以下所有API接口中涉及到图片，样式等资源名称的形参，均表示资源名，且该资源需要放置在drawable目录下，以设置导航栏图标接口为例：
 
   ```
-  RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-          layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
-          layoutParams.setMargins(0, dip2px(this, 450), 0, 0);
-          View otherLoginView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.layout_custom_view, null, false);
-          otherLoginView.setLayoutParams(layoutParams);
-          CMLoginUiConfig cmLoginUiConfig = new CMLoginUiConfig()
-                  // 设置导航栏属性
-                  .setNavigationBar(Color.RED, "登录/注册", Color.WHITE, "back", false)
-                  // 设置Logo属性
-                  .setLogo("ico_logo", 100, 100, false, 100, 0)
-                  // 设置预取号掩码属性
-                  .setMobileMaskNumber(Color.BLACK, 20, 170, 0)
-                  // 设置Slogan属性
-                  .setSlogan(Color.BLACK, 200, 0)
-                  // 设置登录按钮属性
-                  .setLoginButton("一键登录/注册", Color.WHITE, null, 380, 0)
-                  // 设置动态添加自定义View属性
-                  .setCustomView(otherLoginView, "R.layout.layout_custom_view", AuthRegisterViewConfig.RootViewId.ROOT_VIEW_ID_BODY, new CustomInterface() {
-                      @Override
-                      public void onClick(Context context) {
-                          Toast.makeText(context, "点击了动态注册的View", Toast.LENGTH_SHORT).show();
+  setNavigationIcon(String backIcon) 
+  ```
+
+  假设在drawable目录下有back_icon.jpg，则该值为"back_icon"
+
+- 以下所有API接口中如果涉及到顶部偏移和底部偏移的接口，顶部都是相对标题栏底部而言，底部都是相对屏幕底部而言
+
+##### 2.2.1 状态栏
+
+| 方法                                              | 说明                                   |
+| ------------------------------------------------- | -------------------------------------- |
+| setStatusBarColor(int statusBarColor)             | 设置状态栏颜色                         |
+| setStatusBarDarkColor(boolean statusBarDarkColor) | 设置状态栏字体图标颜色是否为暗色(黑色) |
+
+##### 2.2.2 导航栏
+
+| 方法                                              | 说明                                                         |
+| :------------------------------------------------ | ------------------------------------------------------------ |
+| setNavigationIcon(String backIcon)                | 设置导航栏返回图标，backIcon 导航栏图标名称，需要放置在drawable目录下， |
+| setNavigationBackIconWidth(int backIconWidth)     | 设置导航栏返回图标的宽度                                     |
+| setNavigationBackIconHeight(int backIconHeight)   | 设置导航栏返回图标的高度                                     |
+| setNavigationBackgroundColor(int backgroundColor) | 设置导航栏背景颜色                                           |
+| setNavigationTitle(String title)                  | 设置导航栏标题                                               |
+| setNavigationTitleColor(int titleColor)           | 设置导航栏标题颜色                                           |
+| setHideNavigation(boolean isHideNavigation)       | 设置是否隐藏导航栏                                           |
+
+##### 2.2.3应用Logo
+
+| 方法                                        | 说明                                                         |
+| :------------------------------------------ | ------------------------------------------------------------ |
+| setLogoIconName(String logoIconName)        | 设置应用logo图标，logoIconName：logo图标名称，需要放置在drawable目录下 |
+| setLogoWidth(int logoWidth)                 | 设置应用logo宽度，单位dp                                     |
+| setLogoHeight(int logoHeight)               | 设置应用logo高度，单位dp                                     |
+| setLogoTopYOffset(int logoTopYOffset)       | 设置logo顶部Y轴偏移，单位dp                                  |
+| setLogoBottomYOffset(int logoBottomYOffset) | 设置logo距离屏幕底部偏移，单位dp                             |
+| setLogoXOffset(int logoXOffset)             | 设置logo水平方向的偏移，单位dp                               |
+| setHideLogo(boolean hideLogo)               | 设置是否隐藏Logo                                             |
+
+##### 2.2.4手机掩码
+
+| 方法                                                    | 说明                                 |
+| :------------------------------------------------------ | ------------------------------------ |
+| setMaskNumberColor(int maskNumberColor)                 | 设置手机掩码颜色                     |
+| setMaskNumberSize(int maskNumberSize)                   | 设置手机掩码字体大小                 |
+| setMaskNumberTopYOffset(int maskNumberTopYOffset)       | 设置手机掩码顶部Y轴偏移，单位dp      |
+| setMaskNumberBottomYOffset(int maskNumberBottomYOffset) | 设置手机掩码距离屏幕底部偏移，单位dp |
+| setMaskNumberXOffset(int maskNumberXOffset)             | 设置手机掩码水平方向的偏移，单位dp   |
+
+##### 2.2.5认证品牌
+
+| 方法                                            | 说明                                 |
+| :---------------------------------------------- | ------------------------------------ |
+| setSloganSize(int sloganSize)                   | 设置认证品牌字体大小                 |
+| setSloganColor(int sloganColor)                 | 设置认证品牌颜色                     |
+| setSloganTopYOffset(int sloganTopYOffset)       | 设置认证品牌顶部Y轴偏移，单位dp      |
+| setSloganBottomYOffset(int sloganBottomYOffset) | 设置认证品牌距离屏幕底部偏移，单位dp |
+| setSloganXOffset(int sloganXOffset)             | 设置认证品牌水平方向的偏移，单位dp   |
+
+##### 2.2.6登录按钮
+
+| 方法                                                   | 说明                                                 |
+| :----------------------------------------------------- | ---------------------------------------------------- |
+| setLoginBtnText(String loginBtnText)                   | 设置登录按钮文本                                     |
+| setLoginBtnTextSize(int loginBtnTextSize)              | 设置登录按钮文本字体大小                             |
+| setLoginBtnTextColor(int loginBtnTextColor)            | 设置登录按钮文本颜色                                 |
+| setLoginBtnWidth(int loginBtnWidth)                    | 设置登录按钮宽度，单位dp                             |
+| setLoginBtnHeight(int loginBtnHeight)                  | 设置登录按钮高度，单位dp                             |
+| setLoginBtnBackgroundRes(String loginBtnBackgroundRes) | 设置登录按钮背景资源，该资源需要放置在drawable目录下 |
+| setLoginBtnTopYOffset(int loginBtnTopYOffset)          | 设置登录按钮顶部Y轴偏移，单位dp                      |
+| setLoginBtnBottomYOffset(int loginBtnBottomYOffset)    | 设置登录按钮距离屏幕底部偏移，单位dp                 |
+| setLoginBtnXOffset(int loginBtnXOffset)                | 设置登录按钮水平方向的偏移，单位dp                   |
+
+##### 2.2.7隐私协议
+
+| 方法                                                         | 说明                                                         |
+| :----------------------------------------------------------- | ------------------------------------------------------------ |
+| setPrivacyTextColor(int privacyTextColor)                    | 设置隐私栏文本颜色，不包括协议 ，如若隐私栏协议文案为：登录即同意《中国移动认证条款》且授权QuickLogin登录， 则该API对除协议‘《中国移动认证条款》’区域外的其余文本生效 |
+| setPrivacyProtocolColor(int privacyProtocolColor)            | 设置隐私栏协议颜色 。例如：登录即同意《中国移动认证条款》且授权QuickLogin登录 ， 则该API仅对‘《中国移动认证条款》’文案生效 |
+| setPrivacySize(int privacySize)                              | 设置隐私栏区域字体大小                                       |
+| setPrivacyTopYOffset(int privacyTopYOffset)                  | 设置隐私栏顶部Y轴偏移，单位dp                                |
+| setPrivacyBottomYOffset(int privacyBottomYOffset)            | 设置隐私栏距离屏幕底部偏移，单位dp                           |
+| setPrivacyXOffset(int privacyXOffset)                        | 设置隐私栏水平方向的偏移，单位dp                             |
+| setPrivacyState(boolean privacyState)                        | 设置隐私栏协议复选框勾选状态，true勾选，false不勾选          |
+| setHidePrivacyCheckBox(boolean hidePrivacyCheckBox)          | 设置是否隐藏隐私栏勾选框                                     |
+| setPrivacyTextGravityCenter(boolean privacyTextGravityCenter | 设置隐私栏文案换行后是否居中对齐，如果为true则居中对齐，否则左对齐 |
+| setCheckedImageName(String checkedImageName)                 | 设置隐私栏复选框选中时的图片资源，该图片资源需要放到drawable目录下 |
+| setUnCheckedImageName(String unCheckedImageName)             | 设置隐私栏复选框未选中时的图片资源，该图片资源需要放到drawable目录下 |
+| setPrivacyTextStart(String privacyTextStart)                 | 设置隐私栏声明部分起始文案 。如：隐私栏声明为"登录即同意《隐私政策》和《中国移动认证条款》且授权易盾授予本机号码"，则可传入"登录即同意" |
+| setProtocolText(String protocolText)                         | 设置隐私栏协议文本                                           |
+| setProtocolLink(String protocolLink)                         | 设置隐私栏协议链接                                           |
+| setProtocol2Text(String protocol2Text)                       | 设置隐私栏协议2文本                                          |
+| setProtocol2Link(String protocol2Link)                       | 设置隐私栏协议2链接                                          |
+| setPrivacyTextEnd(String privacyTextEnd)                     | 设置隐私栏声明部分尾部文案。如：隐私栏声明为"登录即同意《隐私政策》和《中国移动认证条款》且授权易盾授予本机号码"，则可传入"且授权易盾授予本机号码" |
+
+##### 2.2.8协议详情Web页面导航栏
+
+| 方法                                                   | 说明                      |
+| :----------------------------------------------------- | ------------------------- |
+| setProtocolPageNavTitle(String protocolNavTitle)       | 设置协议Web页面导航栏标题 |
+| setProtocolPageNavBackIcon(String protocolNavBackIcon) | 设置协议导航栏返回图标    |
+| setProtocolPageNavColor(int protocolNavColor)          | 设置协议Web页面导航栏颜色 |
+
+##### 2.2.9其它
+
+| 方法                                       | 说明                                             |
+| :----------------------------------------- | ------------------------------------------------ |
+| setBackgroundImage(String backgroundImage) | 设置登录页面背景，图片资源需放置到drawable目录下 |
+
+### 3. 弹窗模式与横竖屏设置
+
+#### 弹窗模式
+
+```
+setDialogMode(boolean isDialogMode, int dialogWidth, int dialogHeight, int dialogX, int dialogY, boolean isBottomDialog)
+```
+
+各参数及其意义如下：
+
+- isDialogMode：是否开启对话框模式，true开启，false关闭
+- dialogWidth：对话框宽度
+- dialogHeight：对话框高度
+- dialogX：当弹窗模式为中心模式时，弹窗X轴偏移（以屏幕中心为基准）
+- dialogY：当弹窗模式为中心模式时，弹窗Y轴偏移（以屏幕中心为基准）
+- isBottomDialog：是否为底部对话框模式，true则为底部对话框模式，否则为中心模式
+
+**注意：** 设置弹窗效果背景透明度则需要在AndroidManifest.xml中配置授权界面样式，如下是一个简单示例：
+
+1. 为授权界面的activity设置弹窗theme主题，以移动登录界面为例：
+
+   ```
+   <activity
+      android:name="com.cmic.sso.sdk.activity.LoginAuthActivity"
+      android:configChanges="keyboardHidden|orientation|screenSize"
+      android:launchMode="singleTop"
+      android:screenOrientation="behind"
+      android:theme="@style/Theme.ActivityDialogStyle"/>
+   ```
+
+2. 设置theme主题的style样式
+
+   ```
+   <style name="Theme.ActivityDialogStyle" parent="Theme.AppCompat.Light.NoActionBar">
+       <!--背景透明-->
+       <item name="android:windowBackground">@android:color/transparent</item>
+       <item name="android:windowIsTranslucent">true</item>
+       <!--dialog的整个屏幕的背景是否有遮障层-->
+       <item name="android:backgroundDimEnabled">true</item>
+   </style>
+   ```
+
+#### 横竖屏设置
+
+**注意:** 当开发者项目targetSdkVersion指定为26以上时，**只有全屏不透明的Activity才能设置方向**，否则在8.0系统版本上会出现Only fullscreen opaque activities can request orientation异常
+
+
+
+### 4. 自定义控件
+
+#### 4.1 接口
+
+```
+addCustomView(View customView, String viewId, int positionType, LoginUiHelper.CustomViewListener listener
+```
+
+各参数及其意义如下：
+
+- customView：待添加自定义View对象
+- viewId：待添加自定义View的id
+- positionType：添加位置，包含2种类型：`UnifyUiConfig.POSITION_IN_TITLE_BAR`表示添加在标题栏中，`UnifyUiConfig.POSITION_IN_BODY`表示添加到标题栏下方的BODY中
+- listener：待添加的自定义View的事件监听器
+
+#### 4.2 示例
+
+```
+ // 创建相关自定义View
+ ImageView closeBtn = new ImageView(context);
+ closeBtn.setImageResource(R.drawable.close);
+ closeBtn.setScaleType(ImageView.ScaleType.FIT_XY);
+ closeBtn.setBackgroundColor(Color.TRANSPARENT);
+ RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(50, 50);
+ layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.CENTER_VERTICAL);
+ layoutParams.topMargin = 30;
+ layoutParams.rightMargin = 50;
+ closeBtn.setLayoutParams(layoutParams);
+
+LayoutInflater inflater = LayoutInflater.from(context);
+RelativeLayout otherLoginRel = (RelativeLayout) inflater.inflate(R.layout.custom_other_login, null);
+RelativeLayout.LayoutParams layoutParamsOther = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+layoutParamsOther.setMargins(0, 0, 0, Utils.dip2px(context, 130));
+layoutParamsOther.addRule(RelativeLayout.CENTER_HORIZONTAL);
+layoutParamsOther.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+otherLoginRel.setLayoutParams(layoutParamsOther);
+
+// 使用添加自定义View接口将其添加到登录界面
+UnifyUiConfig uiConfig = new UnifyUiConfig.Builder()
+          .addCustomView(otherLoginRel, "relative", UnifyUiConfig.POSITION_IN_BODY, null)
+          .addCustomView(closeBtn, "close_btn", UnifyUiConfig.POSITION_IN_TITLE_BAR, new         	  				LoginUiHelper.CustomViewListener() {
+           			 @Override
+                	  public void onClick(Context context, View view) {
+                   		    Toast.makeText(context, "点击了右上角X按钮", Toast.LENGTH_SHORT).show();
                       }
-                  })
-                  // 设置隐私条款属性
-                  .setClause("自定义条款协议名称1", "https://www.baidu.com", "自定义条款协议名称2", "https://www.baidu.com",
-                          Color.BLACK, Color.RED, "checkbox_true", "checkbox_false", 0, 10);
-          login.setCMLoginUiConfig(cmLoginUiConfig);
-  ```
-
-  更细化的自定义选项示例：
-
-  ```
-   // 更细化的控制,单独设置每一项
-   AuthThemeConfig config = new AuthThemeConfig.Builder()
-   .setAuthNavTransparent(false)
-   .setNavColor(Color.RED)
-   .setXXX // 省略其他设置项
-   .setPrivacyState(true) // 设置默认勾选协议框
-   .build();
-   CMLoginUiConfig cmLoginUiConfig2 = new CMLoginUiConfig().setAuthThemeConfig(config);
-   login.setCMLoginUiConfig(cmLoginUiConfig2);
-  ```
-  
-  **注：更细化的控制接口和自定义属性接口不能混用**
-
-### 2. 联通授权页页面细则与相关自定义接口
-
-- 授权页面细则
-
-  ![cu](./pic/cu.png)
-
-- 自定义属性接口：CULoginUiConfig
-
-```
-      /**
-      * 设置导航栏配置
-      *
-      * @param backgroundColor：           导航栏背景色
-      * @param backButtonBackgroundResId： 返回按钮背景资源
-      * @param textSize：                  导航栏标题字体大小
-      * @param textColor：                 导航栏标题颜色
-      * @param isBold：                    导航栏标题是否使用粗体
-      * @param isShowLine：                是否显示导航栏底部线条
-      * @return
-      */
-  ​   public CULoginUiConfig setNavigationBar(int backgroundColor, int backButtonBackgroundResId, int textSize,int textColor, boolean isBold, boolean isShowLine) 
-
-      /**
-       * 设置导航栏配置
-       *
-       * @param backgroundColor：      导航栏背景色
-       * @param backButtonBackground： 返回按钮背景
-       * @param textSize：             导航栏标题字体大小
-       * @param textColor：            导航栏标题颜色
-       * @param isBold：               导航栏标题是否使用粗体
-       * @param isShowLine：           是否显示导航栏底部线条
-       * @param systemBarTransparent： 系统状态栏是否透明
-       * @param isFullScreen：         是否全屏，即铺满系统状态栏
-       * @return
-       */
-      public CULoginUiConfig setNavigationBar(int backgroundColor, int backButtonBackground,
-                                              int textSize, int textColor, boolean isBold,
-                                              boolean isShowLine, boolean systemBarTransparent,                                               boolean isFullScreen) 
-                                              
-      /**
-       * 设置登录界面的Logo属性
-       *
-       * @param resId：   logo图片的资源ID
-       * @param width：   logo宽度
-       * @param height：  logo高度
-       * @param isShow：  logo是否显示
-       * @param offsetY： logo图片Y轴偏移量（相对上一个控件而言）
-       * @return
-       */
-      public CULoginUiConfig setLogo(int resId, int width, int height, boolean isShow, int                                          offsetY) 
-      
-      /**
-       * 设置应用名称属性
-       *
-       * @param isShow：    是否显示，默认隐藏
-       * @param textColor： 应用名称字体颜色
-       * @param offsetY：   应用名称Y轴偏移量
-       * @return
-       */
-      public CULoginUiConfig setAppName(boolean isShow, int textColor, int offsetY)
-      
-      /**
-       * 设置应用名称属性
-       *
-       * @param isShow：    是否显示，默认隐藏
-       * @param textColor： 应用名称字体颜色
-       * @param offsetY：   应用名称Y轴偏移量
-       * @param textSize：  应用名称字体大小
-       * @param isBold：    是否加粗
-       * @return
-       */
-      public CULoginUiConfig setAppName(boolean isShow, int textColor, int offsetY, int textSize, boolean isBold)
-      
-      /**
-       * 设置登录界面的背景
-       *
-       * @param resId
-       * @return
-       */
-      public CULoginUiConfig setBackground(int resId)
-      
-      /**
-       * 设置登录按钮属性
-       *
-       * @param width：   登录按钮宽度
-       * @param height：  登录按钮高度
-       * @param offsetY： 登录按钮Y轴偏移调整量
-       * @return
-       */
-      public CULoginUiConfig setLoginButton(int width, int height, int offsetY)
-      
-      /**
-       * 设置登录按钮属性
-       *
-       * @param width：   登录按钮宽度
-       * @param height：  登录按钮高度
-       * @param offsetY： 登录按钮Y轴偏移调整量
-       * @param text：    登录按钮文本内容
-       * @return
-       */
-      public CULoginUiConfig setLoginButton(int width, int height, int offsetY, String text)
-      
-      /**
-       * 设置登录按钮属性
-       *
-       * @param width：              登录按钮宽度
-       * @param height：             登录按钮高度
-       * @param offsetY：            登录按钮Y轴偏移调整量
-       * @param text：               登录按钮文本内容
-       * @param protocolCheckRes：   协议选中时登录按钮状态的资源Id
-       * @param protocolUnCheckRes： 协议未选中时登录按钮状态的资源Id
-       * @return
-       */
-      public CULoginUiConfig setLoginButton(int width, int height, int offsetY, String text,
-                                            int protocolCheckRes, int protocolUnCheckRes)
-      
-      /**
-       * 设置本机脱敏号码属性
-       *
-       * @param textColor： 本机脱敏号码字体颜色
-       * @param offsetY：   本机脱敏号码Y轴偏移量
-       * @return
-       */
-      public CULoginUiConfig setMobileMaskNumber(int textColor, int offsetY)
-      
-      /**
-       * 设置本机脱敏号码属性
-       *
-       * @param textColor： 本机脱敏号码字体颜色
-       * @param textSize：  本机脱敏号码字体大小
-       * @param offsetY：   本机脱敏号码Y轴偏移量
-       * @return
-       */
-      public CULoginUiConfig setMobileMaskNumber(int textColor, int textSize, int offsetY)
-      
-      /**
-       * 设置本机脱敏号码属性
-       *
-       * @param textColor： 本机脱敏号码字体颜色
-       * @param textSize：  本机脱敏号码字体大小
-       * @param offsetY：   本机脱敏号码Y轴偏移量
-       * @param bold：      本机脱敏号码是否加粗
-       * @return
-       */
-      public CULoginUiConfig setMobileMaskNumber(int textColor, int textSize, int offsetY,                                                      boolean bold)
-      
-      /**
-       * 设置认证服务品牌属性，即《中国联通服务提供认证》文案的相关属性
-       *
-       * @param color：   认证服务品牌颜色
-       * @param offsetY： 认证服务品牌Y轴偏移量
-       * @param isShow：  认证服务品牌是否显示，默认显示
-       * @return
-       */
-      public CULoginUiConfig setBrand(int color, int offsetY, boolean isShow
-      
-      /**
-       * 设置其他登录方式属性
-       *
-       * @param text：   其他登录方式内容
-       * @param color：  其他登录方式字体颜色
-       * @param bold：   其他登录方式文案是否加粗
-       * @param isShow： 其他登录方式是否显示
-       * @return
-       */
-      public CULoginUiConfig setOtherLogin(String text, int color, boolean bold, boolean isShow) 
-      
-      /**
-       * 设置其他登录方式属性
-       *
-       * @param text：    其他登录方式内容
-       * @param color：   其他登录方式字体颜色
-       * @param bold：    其他登录方式文案是否加粗
-       * @param isShow：  其他登录方式是否显示
-       * @param offsetX： 其他登录方式X轴偏移
-       * @return
-       */
-      public CULoginUiConfig setOtherLogin(String text, int color, boolean bold, boolean isShow,                                          int offsetX)
-      
-      /**
-       * 设置登录界面是否显示Loading框
-       *
-       * @param isShowLoading
-       * @return
-       */
-      public CULoginUiConfig setShowLoading(boolean isShowLoading)
-      
-      /**
-       * 设置登录界面Loading框的提示文案
-       *
-       * @param loadingTip
-       * @return
-       */
-      public CULoginUiConfig setLoadingTip(String loadingTip)
-      
-      /**
-       * 设置登录界面Loading属性
-       *
-       * @param loadingTip： loading提示
-       * @param width：      loading宽度
-       * @param height：     loading高度
-       * @param textSize：   loading字体大小
-       * @param textColor：  loading字体颜色
-       * @return
-       */
-      public CULoginUiConfig setLoading(String loadingTip, int width, int height, int textSize,                                         int textColor)
-      
-      /**
-       * 设置登录界面Loading属性
-       *
-       * @param loadingTip： loading提示
-       * @param width：      loading宽度
-       * @param height：     loading高度
-       * @param textSize：   loading字体大小
-       * @param textColor：  loading字体颜色
-       * @param isShow：     loading文案是否显示
-       * @return
-       */
-      public CULoginUiConfig setLoading(String loadingTip, int width, int height, int textSize,                                         int textColor, boolean isShow)
-      
-      /**
-       * 设置登录界面Loading属性
-       *
-       * @param loadingTip：         loading提示
-       * @param width：              loading宽度
-       * @param height：             loading高度
-       * @param textSize：           loading字体大小
-       * @param textColor：          loading字体颜色
-       * @param isShow：             loading文案是否显示
-       * @param backgroundResource： loading背景样式资源Id
-       * @return
-       */
-      public CULoginUiConfig setLoading(String loadingTip, int width, int height, int textSize,
-                                        int textColor, boolean isShow, int backgroundResource)
-      
-      /**
-       * 设置协议属性
-       * 要完成该操作需要在aar包中将布局文件复制粘贴至接入方项目，在xml中添加控件后，
-       * 将添加的控件ID及需要跳转的url通过该接口进行设置方可点击
-       *
-       * @param offsetY：       协议整体的Y轴偏移
-       * @param textColor：     联通协议字体颜色
-       * @param textSize：      联通协议字体大小
-       * @param protocolId：    接入者自定义协议控件ID
-       * @param protocolText：  协议1文案
-       * @param protocolLink：  接入者自定义协议跳转链接
-       * @param protocol2Id：   接入者自定义协议2控件ID
-       * @param protocol2Text： 协议2文案
-       * @param protocol2Link： 接入者自定义协议2跳转链接
-       * @return
-       */
-      public CULoginUiConfig setProtocol(int offsetY, int textColor, int textSize,
-                                     String protocolId, String protocolText, String protocolLink,
-                                     String protocol2Id, String protocol2Text, String                                                protocol2Link)
-      
-      /**
-       * 设置协议属性
-       * 要完成该操作需要在aar包中将布局文件复制粘贴至接入方项目，在xml中添加控件后，
-       * 将添加的控件ID及需要跳转的url通过该接口进行设置方可点击
-       *
-       * @param offsetY：       协议整体的Y轴偏移
-       * @param textColor：     联通协议字体颜色
-       * @param textSize：      联通协议字体大小
-       * @param checkBoxStyle： 复选框选中样式
-       * @param protocolId：    接入者在xml自定义协议控件ID
-       * @param protocolText：  协议1文案
-       * @param protocolLink：  接入者自定义协议跳转链接
-       * @param protocol2Id：   接入者在xml自定义协议2控件ID
-       * @param protocol2Text： 协议2文案
-       * @param protocol2Link： 接入者自定义协议2跳转链接
-       * @return
-       */
-      public CULoginUiConfig setProtocol(int offsetY, int textColor, int textSize, int                               checkBoxStyle,String protocolId, String protocolText, String protocolLink,
-                       String protocol2Id, String protocol2Text, String protocol2Link)
-      /**
-       * 设置View显示或隐藏
-       *
-       * @param viewNames        待设置隐藏属性的控件名称数组，可设置名称 {@link com.sdk.mobile.manager.login.cucc.ConstantCucc}
-       * @param visibilityValues 控件是否隐藏的bool值，与{@code viewNames}的每一项一一对应
-       * @return
-       */
-      public CULoginUiConfig setViewsVisibility(String[] viewNames, boolean[] visibilityValues)
-      
-      /**
-       * 设置View背景资源文件
-       *
-       * @param viewNames 待设置背景资源的控件名称数组，可设置名称 {@link com.sdk.mobile.manager.login.cucc.ConstantCucc}
-       * @param resIds    控件对应的具体资源Id，与{@code viewNames}的每一项一一对应
-       * @return
-       */
-      public CULoginUiConfig setViewsBackgroundResource(String[] viewNames, int[] resIds)
-      
-      /**
-       * 设置控件相对于Y轴偏移
-       *
-       * @param viewNames    待设置偏移属性的控件名称数组，可设置名称 {@link com.sdk.mobile.manager.login.cucc.ConstantCucc}
-       * @param offsetValues 控件一一对应的具体偏移值，与{@code viewNames}的每一项一一对应
-       * @return
-       */
-      public CULoginUiConfig setViewsOffsetY(String[] viewNames, int[] offsetValues)
-      
-       /**
-       * 设置控件字体是否粗体
-       *
-       * @param viewNames  待设置粗体属性的控件名称数组，可设置名称 {@link com.sdk.mobile.manager.login.cucc.ConstantCucc}
-       * @param boldValues 控件是否使用粗体的bool值，与{@code viewNames}的每一项一一对应
-       * @return
-       */
-      public CULoginUiConfig setViewsBold(String[] viewNames, boolean[] boldValues) 
-      
-       /**
-       * 设置控件字体内容
-       *
-       * @param viewNames 待修改字体内容的控件名称数组，可设置名称 {@link com.sdk.mobile.manager.login.cucc.ConstantCucc}
-       * @param texts     控件对应修改的内容，与{@code viewNames}的每一项一一对应
-       * @return
-       */
-      public CULoginUiConfig setViewsText(String[] viewNames, String[] texts)
-      
-      /**
-       * 设置控件字体颜色
-       *
-       * @param viewNames  待修改字体颜色的控件名称数组，可设置名称 {@link com.sdk.mobile.manager.login.cucc.ConstantCucc}
-       * @param textColors 控件对应的颜色值，与{@code viewNames}的每一项一一对应
-       * @return
-       */
-      public CULoginUiConfig setViewsTextColor(String[] viewNames, int[] textColors) 
-      
-      /**
-       * 设置控件字体大小
-       *
-       * @param viewNames 待修改字体大小的控件名称数组，可设置名称 {@link com.sdk.mobile.manager.login.cucc.ConstantCucc}
-       * @param textSizes 控件字体大小对应的具体值，与{@code viewNames}的每一项一一对应
-       * @return
-       */
-      public CULoginUiConfig setViewsTextSize(String[] viewNames, int[] textSizes)
-      
-      /**
-       * 设置是否显示协议复选框
-       *
-       * @param isShowProtocolBox
-       * @return
-       */
-      public CULoginUiConfig setShowProtocolBox(boolean isShowProtocolBox)
-      
-      /**
-       * 设置其它登录按钮的点击事件监听
-       *
-       * @param customViewListener： 事件监听器
-       * @return
-       */
-      public CULoginUiConfig setOtherLoginListener(OnCustomViewListener customViewListener)
-      
-      /**
-       * 设置自定义控件区的事件监听
-       *
-       * @param customViewId：       在xml中放置的自定义控件的ID
-       * @param customViewListener： 事件监听器
-       * @return
-       */
-      public CULoginUiConfig setCustomViewListener(String customViewId, OnCustomViewListener                                                      customViewListener)
-```
-
-- 自定义选项示例
-
-  
-  
-  ```
-    // 以下所有接口中，如果某个参数不打算修改默认值，int类型传0值，String类型传null即可
-    CULoginUiConfig cuLoginUiConfig = new CULoginUiConfig()
-            // 设置导航栏属性
-            .setNavigationBar(Color.WHITE, 0, 20, Color.BLACK, true, false)
-            // 设置Logo属性
-            .setLogo(R.drawable.ic_launcher_background, 100, 100, true, 40)
-            // 设置App名属性
-            .setAppName(true, Color.BLACK, 100)
-            // 设置登录按钮属性
-            .setLoginButton(500, 100, 100, "一键登录/注册")
-            // 设置手机掩码属性
-            .setMobileMaskNumber(Color.BLACK, 20, 40)
-            // 设置品牌商属性
-            .setBrand(Color.BLACK, 20, true)
-            // 设置其它登录按钮属性
-            .setOtherLogin("其它方式登录", Color.RED, true, true, 0)
-            .setLoading("正在加载，请稍后...", 100, 200, 15, Color.BLUE, true)
-            .setViewsVisibility(new String[]{"btn_right"}, new boolean[]{true})
-            .setViewsText(new String[]{ConstantCucc.OAUTH_TITLE}, new String[]{"一键登录/注册"})
-            .setViewsTextColor(new String[]{ConstantCucc.OAUTH_CONTENT}, new int[]{0xAC5FF9})
-            .setShowProtocolBox(true)
-            // 设置其它登录监听
-            .setOtherLoginListener(new OnCustomViewListener() {
-                @Override
-                public void onClick(View view, UiHandler uiHandler) {
-                    Toast.makeText(getApplicationContext(), "点击了其他登录按钮", Toast.LENGTH_SHORT).show();
-                }
-            })
-            .setCustomViewListener("btn_right", new OnCustomViewListener() {
-                @Override
-                public void onClick(View view, UiHandler uiHandler) {
-                    Toast.makeText(getApplicationContext(), "点击了右上角跳过按钮", Toast.LENGTH_SHORT).show();
-                }
-            })
-            .setCustomViewListener("custom_view_id", new OnCustomViewListener() {
-            @Override
-                public void onClick(View view, UiHandler uiHandler) {
-                Toast.makeText(getApplicationContext(), "点击了动态添加的View", Toast.LENGTH_SHORT).show();
-                }
-        })
-            // 设置隐私协议属性
-            .setProtocol(20, Color.BLACK, 12, "custom_protocol_1", "自定义条款协议名称1", "https://www.baidu.com", "custom_protocol_2", "自定义条款协议名称2", "https://www.baidu.com");
-    login.setCULoginUiConfig(cuLoginUiConfig);
-  ```
-  
-    更细化的自定义选项
-  
-    根据自定义属性需求创建相应对象，如导航栏NavigationBar，Logo，隐私协议Protocol等，可设置的属性对象请参看前面授权页面细则部分，然后调用其内置的属性设置方法，下面是简单示例：
-  
-  ```
-      // 更细化的控制，单独设置每一项
-      UiConfig uiConfig = new UiConfig(); // 创建UI配置对象
-      NavigationBar navigationBar = new NavigationBar(); // 创建导航栏属性对象
-      navigationBar.setText("登录/注册");
-      navigationBar.setBackgroundColor(Color.RED);
-      uiConfig.setNavigationBar(navigationBar);  // 设置导航栏属性
-      Logo logo = new Logo(); // 创建Logo属性对象
-      logo.setShow(true);
-      logo.setWidth(80);
-      logo.setHeight(80);
-      uiConfig.setLogo(logo); // 设置logo属性
-      Protocol protocol = new Protocol();
-      protocol.setCustomProtocol1_id("custom_protocol_1");
-      protocol.setCustomProtocol1_text("自定义条款协议名称1");
-      protocol.setCustomProtocol1_Link("https://www.baidu.com");
-      protocol.setCustomProtocol2_id("custom_protocol_2");
-      protocol.setCustomProtocol2_text("自定义条款协议名称2");
-      protocol.setCustomProtocol2_Link("https://www.baidu.com");
-      uiConfig.setProtocol(protocol);
-  CULoginUiConfig cuLoginUiConfig2 = new CULoginUiConfig().setUiConfig(uiConfig); 
-      cuLoginUiConfig2.setOtherLoginListener(new OnCustomViewListener() {
-      @Override
-      public void onClick(View view, UiHandler uiHandler) {
-      Toast.makeText(getApplicationContext(), "点击了其他登录按钮", Toast.LENGTH_SHORT).show();
-      }
-      });
-      login.setCULoginUiConfig(cuLoginUiConfig2); // 设置UI配置
-  ```
-  
-    **注：更细化的控制接口和自定义属性接口不能混用**
-
-
-
-### 3.移动授权页面使用弹窗模式
-
-通过注册Activity的生命周期的监听，在授权页面打开的时候，获取window，设置window的属性，来
-设置弹窗模式，代码示例如下
-
-1.为授权界面的activity设置弹窗theme主题
-
-  ```
- <activity
-     android:name="com.cmic.sso.sdk.activity.LoginAuthActivity"
-     android:configChanges="keyboardHidden|orientation|screenSize"
-     android:launchMode="singleTop"
-     android:screenOrientation="behind"
-     android:theme="@style/Theme.ActivityDialogStyle"/>
-  ```
-
-2.设置theme主题的style样式
-
-```
- <style name="Theme.ActivityDialogStyle" parent="Theme.AppCompat.Light.NoActionBar">
-          <!--背景透明-->
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowIsTranslucent">true</item>
-          <!--dialog的整个屏幕的背景是否有遮障层-->
-        <item name="android:backgroundDimEnabled">true</item>
-    </style>
-```
-
-3.在Application中注册activity的生命周期
-
-```
-registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
-            @Override
-            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-
-            }
-    
-            @Override
-            public void onActivityStarted(Activity activity) {
-    
-            }
-    
-            @Override
-            public void onActivityResumed(Activity activity) {
-                if (activity.getClass().getName().contains("LoginAuthActivity")) {
-                    DisplayMetrics dm = new DisplayMetrics();
-                    activity.getWindow().getWindowManager().getDefaultDisplay().getMetrics(dm);
-                    WindowManager.LayoutParams p = activity.getWindow().getAttributes();
-                    //设置window大小
-                    p.height = (int) (dm.heightPixels * 0.4);
-                    p.width = (int) (dm.widthPixels);
-                    //设置window位置
-                    p.gravity = Gravity.BOTTOM;
-                    activity.getWindow().setAttributes(p);
-                }
-            }
-    
-            @Override
-            public void onActivityPaused(Activity activity) {
-    
-            }
-    
-            @Override
-            public void onActivityStopped(Activity activity) {
-    
-            }
-    
-            @Override
-            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-    
-            }
-    
-            @Override
-            public void onActivityDestroyed(Activity activity) {
-    
-            }
-        });
+           })
+           .build(context);
 ```
 
 ## 监听用户取消一键登录
@@ -1114,67 +580,6 @@ registerActivityLifecycleCallbacks(new ActivityLifecycleCallbacks() {
 
 ### 1. 联通常见问题
 
-- 授权页面如何添加自己的协议？
-
-答：添加协议需要在 aar 包中将布局文件activity_oauth.xml复制粘贴至接入方项目，在 xml 中添加控件后，
-将添加的控件 ID 及需要跳转的 url 填入 Protocol 类方可点击
-
-- 授权页面如何添加自定义控件？
-
-答：添加自定义控件需要提取 aar 中对应的 xml 文件activity_oauth.xml复制粘贴至接入方项目，在 xml 中添加控件后，调用自定义控件事件监听接口setCustomViewListener进行业务方的自定义控件点击事件处理
-
-- 添加自定义协议和添加自定义控件需要修改布局文件activity_oauth.xml，在哪里可以找到该文件呢？
-
-答：用解压缩软件打开Ui-factory_oauth_mobile_3.8.3.1.aar文件，位于res/layout/activity_oauth.xml路径下
-
-- 自定义底部协议复选框与默认的同时存在，会出现重叠现象，该如何解决？
-
-答：出现该现象只需将联通登录界面布局文件activity_oauth.xml中的CheckBox添加android:button="@null"属性即可，示例xml代码如下
-
-```
-<CheckBox
-    android:id="@+id/is_agree"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:visibility="gone"
-    android:button="@null"/>
-```
-
-- 如果我希望用户在点击跳转到三方登录时，关闭登录页面，有相关接口可以调用吗？
-
-答：对于移动而言可以调用如下语句来关闭登录授权页
-
-`AuthnHelper.getInstance(getApplicationContext()).quitAuthActivity();`
-
-​       对于联通而言可以注册对该三方登录按钮的监听，当用户点击按钮时在点击回调中调用调用UiHandler的finish()方法，示例代码如下：
-
-```
-RegisterManager.getInstance().setCustomViewListener("customId", new OnCustomViewListener() {
-            @Override
-            public void onClick(View view, UiHandler uiHandler) {
-                uiHandler.finish(); // 关闭登录授权页
-            }
-        });
-```
-
-- 联通登录按钮背景设置为何没生效？
-
-答：  可通过ViewManager接口来设置控件属性，将id为ConstantCucc.OAUTH_LOGIN与资源绑定，示例代码如下：
-
-```
-  ViewManager viewManager = new ViewManager();
-  Map<String, Integer> backgroundResource = new HashMap<>();
-  //联通登陆按钮(id——>资源)
-  backgroundResource.put(ConstantCucc.OAUTH_LOGIN, R.drawable.selector_button_ctc);
-  //添加背景资源的控件
-  viewManager.setViewsBackgroundResource(backgroundResource);
-  List<ViewManager> viewManagers = new ArrayList<>();
-  //添加至viewsManagers
-  viewManagers.add(viewManager);
-  //注册
-  uiConfig.setViewManagers(viewManagers);
-```
-
 - 预取号返回的错误信息为"公网IP无效"
 
 答：联通返回公网IP无效一般是如下几类原因导致：
@@ -1190,7 +595,7 @@ RegisterManager.getInstance().setCustomViewListener("customId", new OnCustomView
 
 ## 体验Demo下载
 
-扫描二维码下载体验Demo  
+扫描二维码下载体验Demo
 ![cu](./pic/download.png)
 
 ## Demo代码示例
