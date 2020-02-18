@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="nis.netease.com.quickpassdemo">
 
-
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
     <application
         android:name="QuickLoginApplication"
         android:allowBackup="false"
