@@ -49,8 +49,6 @@ login.prefetchMobileNumber(new QuickLoginPreMobileListener() {
         }
     });
 ```
-**NOITE**:对于移动和联通而言因必须使用运营商界面，onGetMobileNumberSuccess回调中mobileNumber形参值为null，无需关心该值内容，直接在该回调中调用取号接口onePass即可展示一键登录界面并自动显示掩码mobileNumber
-
 #### 3 一键登录
 
 **NOITE**:调用一键登录接口前请务必调用预取号接口，在预取号接口的成功回调中调用一键登录接口，获取运营商授权码与易盾token  
@@ -131,12 +129,14 @@ public int getOperatorType(Context context)
 #### 6 其他接口
 
 ```
-public void setPreCheckUrl(String url) // 设置预取url接口
-public void setExtendData(JSONObject extendData) // 设置扩展数据
-public boolean onExtendMsg(JSONObject extendMsg) // 当用户自定义预取Url后，如果在自己业务后端判断调用非法，可直接调用该接口返回false实现快速降级，以及获取自己业务后端处理后返回的数据
 public void setUnifyUiConfig(UnifyUiConfig uiConfig) // 设置一键登录页面自定义属性，详细可配置信息{@link UnifyUiConfig#Builder}
 public void setPrefetchNumberTimeout(int timeout) // 设置预取号超时时间，单位s
 public void setFetchNumberTimeout(int timeout)    // 设置取号超时时间，单位s
+
+public void setPreCheckUrl(String url) // 设置预取url接口，一般无需设置，当开发者希望接管preCheck逻辑时可设置代理preCheck Url，具体规则请查看易盾一键登录后端接入说明文档
+public void setExtendData(JSONObject extendData) // 设置扩展数据，一般无需设置
+public boolean onExtendMsg(JSONObject extendMsg) // 当用户自定义预取Url后，如果在自己业务后端判断调用非法，可直接调用该接口返回false实现快速降级，以及获取自己业务后端处理后返回的数据
+
 ```
 
 
@@ -159,7 +159,7 @@ public abstract class QuickLoginPreMobileListener implements QuickLoginListener 
     void onGetMobileNumberError(String YDToken, String msg);
     
      /**
-     * 业务方自定义PreCheck后，业务方扩展字段的回调，
+     * 业务方自定义preCheck后，业务方扩展字段的回调，
      * 返回false表示业务方希望中断sdk后续流程处理，直接降级
      *
      * @param extendMsg
@@ -197,10 +197,10 @@ public abstract class QuickLoginTokenListener implements QuickLoginListener {
 ```
 
 ## 使用步骤
-### 1创建QuickLogin对象实例
+### 1获取QuickLogin对象实例
 
 ```
-QuickLogin login = QuickLogin.getInstance(getApplicationContext(),
+QuickLogin login = QuickLogin.getInstance(getApplicationContext(), BUSINESS_ID);
 ```
 
 ### 2根据本机校验或一键登录需求调用对应的接口
@@ -221,7 +221,7 @@ login.prefetchMobileNumber(new QuickLoginPreMobileListener() {
         @Override
         public boolean onExtendMsg(JSONObject extendMsg) {
            Log.d(TAG, "获取的扩展字段内容为:" + extendMsg.toString());
-           // 如果接入者自定义了preCheck接口，可在该方法中通过返回true或false来进行控制是否快速降级
+           // 如果接入者自定义了preCheck接口，可在该方法中通过返回true或false来控制是否快速降级
            return super.onExtendMsg(extendMsg);
         }
     });
@@ -276,7 +276,7 @@ login.getToken(mobileNumber, new QuickLoginTokenListener() {
     @Override
     public boolean onExtendMsg(JSONObject extendMsg) {
         Log.d(TAG, "获取的扩展字段内容为:" + extendMsg.toString());
-        // 如果接入者自定义了preCheck接口，可在该方法中通过返回true或false来进行控制是否快速降级
+        // 如果接入者自定义了preCheck接口，可在该方法中通过返回true或false来控制是否快速降级
         return super.onExtendMsg(extendMsg);
     }
 });
