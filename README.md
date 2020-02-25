@@ -569,9 +569,15 @@ UnifyUiConfig uiConfig = new UnifyUiConfig.Builder()
     public <methods>;
     public <fields>;
 }
--keep class com.netease.nis.quicklogin.helper.CULoginUiConfig{*;}
--keep class com.netease.nis.quicklogin.helper.CMLoginUiConfig{*;}
--keep class com.netease.nis.quicklogin.utils.IConstants$OperatorType{*;}
+-keep class com.netease.nis.quicklogin.helper.UnifyUiConfig{*;}
+-keep class com.netease.nis.quicklogin.helper.UnifyUiConfig$Builder{
+     public <methods>;
+     public <fields>;
+ }
+-keep class com.netease.nis.quicklogin.utils.LoginUiHelper$CustomViewListener{
+     public <methods>;
+     public <fields>;
+}
 -dontwarn com.sdk.**
 -keep class com.sdk.** { *;}
 ```
