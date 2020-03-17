@@ -204,6 +204,9 @@ QuickLogin login = QuickLogin.getInstance(getApplicationContext(), BUSINESS_ID);
 ```
 
 ### 2根据本机校验或一键登录需求调用对应的接口
+
+**NOTE: 以下回调接口有可能来自子线程回调，如果您要在回调中修改UI状态，请在回调中抛到主线程中处理，如像Demo示例那样使用runOnUiThread API**
+
 #### 2.1 一键登录
 ##### 2.1.1 调用prefetchMobileNumber接口预取号
 
@@ -299,10 +302,10 @@ login.setExtendData(extData); // 如果自定义url需要接受一些自己的�
 
 ### 1. 设计规范
 #### 1.1 规范示意图
-![安卓规范示意图](./pic/安卓规范示意图.jpg)
+![安卓规范示意图](https://nos.netease.com/cloud-website-bucket/fc608fc8c376e8b384e947e575ef8b5f.jpg)
 
 #### 1.2  易盾自定义展示样例
-![自定义展示图](./pic/自定义展示图.jpg)
+![自定义展示图](https://nos.netease.com/cloud-website-bucket/410d6012173c5531b1065909c9484d36.jpg)
 
 ### 2. 自定义UI配置接口
 
@@ -602,7 +605,7 @@ UnifyUiConfig uiConfig = new UnifyUiConfig.Builder()
 ## 体验Demo下载
 
 扫描二维码下载体验Demo
-![cu](./pic/download.png)
+![cu](https://nos.netease.com/cloud-website-bucket/172420806df9c24d3aecc3ff9e661f88.png)
 
 ## Demo代码示例
 
