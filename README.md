@@ -15,6 +15,8 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'    // 配置对gson的依赖
 }
 ```
+**NOTE：为了避免不同Android Studio版本对依赖库资源替换的顺序不同导致的一些问题，请将**`quicklogin-external-release`的依赖放到上述其他依赖库的最前面
+
 然后在app的build.gradle的android下添加
 
 ```
@@ -136,6 +138,7 @@ public void setFetchNumberTimeout(int timeout)    // 设置取号超时时间，
 public void setPreCheckUrl(String url) // 设置预取url接口，一般无需设置，当开发者希望接管preCheck逻辑时可设置代理preCheck Url，具体规则请查看易盾一键登录后端接入说明文档
 public void setExtendData(JSONObject extendData) // 设置扩展数据，一般无需设置
 public boolean onExtendMsg(JSONObject extendMsg) // 当用户自定义预取Url后，如果在自己业务后端判断调用非法，可直接调用该接口返回false实现快速降级，以及获取自己业务后端处理后返回的数据
+public void quitActivity() // 退出一键登录页面
 
 ```
 
@@ -370,13 +373,14 @@ QuickLogin.getInstance(getApplicationContext(),onePassId).setUnifyUiConfig(Quick
 
 ##### 2.2.4手机掩码
 
-| 方法                                                    | 说明                                 |
-| :------------------------------------------------------ | ------------------------------------ |
-| setMaskNumberColor(int maskNumberColor)                 | 设置手机掩码颜色                     |
-| setMaskNumberSize(int maskNumberSize)                   | 设置手机掩码字体大小                 |
-| setMaskNumberTopYOffset(int maskNumberTopYOffset)       | 设置手机掩码顶部Y轴偏移，单位dp      |
-| setMaskNumberBottomYOffset(int maskNumberBottomYOffset) | 设置手机掩码距离屏幕底部偏移，单位dp |
-| setMaskNumberXOffset(int maskNumberXOffset)             | 设置手机掩码水平方向的偏移，单位dp   |
+| 方法                                                         | 说明                                                         |
+| :----------------------------------------------------------- | ------------------------------------------------------------ |
+| setMaskNumberColor(int maskNumberColor)                      | 设置手机掩码颜色                                             |
+| setMaskNumberSize(int maskNumberSize)                        | 设置手机掩码字体大小                                         |
+| setMaskNumberTopYOffset(int maskNumberTopYOffset)            | 设置手机掩码顶部Y轴偏移，单位dp                              |
+| setMaskNumberBottomYOffset(int maskNumberBottomYOffset)      | 设置手机掩码距离屏幕底部偏移，单位dp                         |
+| setMaskNumberXOffset(int maskNumberXOffset)                  | 设置手机掩码水平方向的偏移，单位dp                           |
+| setMaskNumberListener(MaskNumberListener maskNumberListener) | 设置手机掩码自定义监听器，用于对手机掩码栏实现自定义功能（可参见Demo示例工程） |
 
 ##### 2.2.5认证品牌
 
@@ -412,6 +416,7 @@ QuickLogin.getInstance(getApplicationContext(),onePassId).setUnifyUiConfig(Quick
 | setPrivacyTopYOffset(int privacyTopYOffset)                  | 设置隐私栏顶部Y轴偏移，单位dp                                |
 | setPrivacyBottomYOffset(int privacyBottomYOffset)            | 设置隐私栏距离屏幕底部偏移，单位dp                           |
 | setPrivacyXOffset(int privacyXOffset)                        | 设置隐私栏水平方向的偏移，单位dp                             |
+| setPrivacyMarginRight(int privacyMarginRight)                | 设置隐私栏右侧边距，单位dp                                   |
 | setPrivacyState(boolean privacyState)                        | 设置隐私栏协议复选框勾选状态，true勾选，false不勾选          |
 | setHidePrivacyCheckBox(boolean hidePrivacyCheckBox)          | 设置是否隐藏隐私栏勾选框                                     |
 | setPrivacyTextGravityCenter(boolean privacyTextGravityCenter | 设置隐私栏文案换行后是否居中对齐，如果为true则居中对齐，否则左对齐 |
@@ -434,9 +439,12 @@ QuickLogin.getInstance(getApplicationContext(),onePassId).setUnifyUiConfig(Quick
 
 ##### 2.2.9其它
 
-| 方法                                       | 说明                                             |
-| :----------------------------------------- | ------------------------------------------------ |
-| setBackgroundImage(String backgroundImage) | 设置登录页面背景，图片资源需放置到drawable目录下 |
+| 方法                                                    | 说明                                                         |
+| :------------------------------------------------------ | ------------------------------------------------------------ |
+| setBackgroundImage(String backgroundImage)              | 设置登录页面背景，图片资源需放置到drawable目录下             |
+| setBackgroundGif(String backgroundGif)                  | 设置登录页面背景为Gif，Gif资源需要放置到drawable目录下，传入资源名称即可 |
+| setBackgroundVideo(String videoPath, String videoImage) | 设置登录页面背景为视频，参数videoPath为背景Video文件路径:(支持本地路径如："android.resource://" + context.getPackageName() + "/" + R.raw.xxxVideo；支持网络路径如"https://xxx"(建议下载到本地后使用本地路径，网络路径由于网络环境的不可控体验不如直接加载本地视频)，参数videoImage为视频播放前的背景图片(需要放置到drawable文件中，传入图片名称即可)，2个参数必须都设置 |
+| setLoginListener(LoginListener loginListener)           | 设置未同意隐私协议但点击一键登录按钮时的事件监听器，可用于自定义相关提示信息，使用示例可参看Demo示例工程 |
 
 ### 3. 弹窗模式与横竖屏设置
 
@@ -481,6 +489,38 @@ setDialogMode(boolean isDialogMode, int dialogWidth, int dialogHeight, int dialo
    ```
 
 #### 横竖屏设置
+
+```
+setLandscape(boolean landscape) // 设置是否为横屏模式，默认竖屏
+```
+
+如果要设置为横屏，请在清单文件中对登录页面Activity配置`android:configChanges="keyboardHidden|orientation|screenSize"`，如下是简单示例：
+
+```
+       <!--移动登录类名-->
+        <activity
+            android:name="com.cmic.sso.wy.activity.LoginAuthActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTop"
+            android:screenOrientation="behind"
+            android:theme="@style/Theme.ActivityDialogStyle"
+            tools:replace="android:screenOrientation,android:configChanges" />
+        <!--联通登录类名-->
+        <activity
+            android:name="com.sdk.mobile.manager.login.cucc.OauthActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTop"
+            android:screenOrientation="behind"
+            android:theme="@style/Theme.ActivityDialogStyle"
+            tools:replace="android:screenOrientation,android:theme" />
+        <!--电信登录类名-->
+        <activity
+            android:name="com.netease.nis.quicklogin.ui.YDQuickLoginActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTop"
+            android:screenOrientation="behind"
+            android:theme="@style/Theme.ActivityDialogStyle" />
+```
 
 **注意:** 当开发者项目targetSdkVersion指定为26以上时，**只有全屏不透明的Activity才能设置方向**，否则在8.0系统版本上会出现Only fullscreen opaque activities can request orientation异常
 
