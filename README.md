@@ -15,7 +15,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'    // 配置对gson的依赖
 }
 ```
-**NOTE：为了避免不同Android Studio版本对依赖库资源替换的顺序不同导致的一些问题，请将**`quicklogin-external-release`的依赖放到上述其他依赖库的最前面
+**NOTE：为了避免不同Android Studio版本对依赖库资源替换的顺序不同导致的一些问题，请将`quicklogin-external-release`的依赖放到上述其他依赖库的最前面**
 
 然后在app的build.gradle的android下添加
 
