@@ -476,11 +476,17 @@ QuickLogin.getInstance(getApplicationContext(),onePassId).setUnifyUiConfig(Quick
 
 ### 5.11 协议详情Web页面导航栏
 
-| 方法                                                   | 说明                      |
-| :----------------------------------------------------- | ------------------------- |
-| setProtocolPageNavTitle(String protocolNavTitle)       | 设置协议Web页面导航栏标题 |
-| setProtocolPageNavBackIcon(String protocolNavBackIcon) | 设置协议导航栏返回图标    |
-| setProtocolPageNavColor(int protocolNavColor)          | 设置协议Web页面导航栏颜色 |
+| 方法                                                         | 说明                                      |
+| :----------------------------------------------------------- | ----------------------------------------- |
+| setProtocolPageNavTitle(String protocolNavTitle)             | 设置协议Web页面导航栏标题                 |
+| setProtocolPageNavBackIcon(String protocolNavBackIcon)       | 设置协议Web页面导航栏返回图标             |
+| setProtocolPageNavColor(int protocolNavColor)                | 设置协议Web页面导航栏颜色                 |
+| setProtocolPageNavHeight(int protocolNavHeight)              | 设置协议Web页面导航栏高度                 |
+| setProtocolPageNavTitleSize(int protocolNavTitleSize)        | 设置协议Web页面导航栏标题大小，单位sp     |
+| setProtocolPageNavTitleDpSize(int protocolNavTitleDpSize)    | 设置协议Web页面导航栏标题大小，单位dp     |
+| setProtocolPageNavBackIconWidth(int protocolNavBackIconWidth) | 设置协议Web页面导航栏返回按钮宽度，单位dp |
+| setProtocolPageNavBackIconHeight(int protocolNavBackIconHeight) | 设置协议Web页面导航栏返回按钮高度，单位dp |
+
 
 ### 5.12 其它
 
