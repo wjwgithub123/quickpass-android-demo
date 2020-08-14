@@ -169,7 +169,15 @@ public void getToken(final String mobileNumber, final QuickLoginTokenListener li
 */
 public int getOperatorType(Context context) 
 ```
-### 3.6 其他接口
+### 3.6 退出授权页
+
+SDK从v2.2.6版本开始，调用onePass接口后不再主动关闭授权页，接入者可根据自己业务需求在合适时机调以下接口来主动关闭授权页
+
+```
+public void quitActivity() // 退出一键登录页面
+```
+
+### 3.7 其他接口
 
 ```
 public void setUnifyUiConfig(UnifyUiConfig uiConfig) // 设置一键登录页面自定义属性，详细可配置信息{@link UnifyUiConfig#Builder}
@@ -476,16 +484,18 @@ QuickLogin.getInstance(getApplicationContext(),onePassId).setUnifyUiConfig(Quick
 
 ### 5.11 协议详情Web页面导航栏
 
-| 方法                                                         | 说明                                      |
-| :----------------------------------------------------------- | ----------------------------------------- |
-| setProtocolPageNavTitle(String protocolNavTitle)             | 设置协议Web页面导航栏标题                 |
-| setProtocolPageNavBackIcon(String protocolNavBackIcon)       | 设置协议Web页面导航栏返回图标             |
-| setProtocolPageNavColor(int protocolNavColor)                | 设置协议Web页面导航栏颜色                 |
-| setProtocolPageNavHeight(int protocolNavHeight)              | 设置协议Web页面导航栏高度                 |
-| setProtocolPageNavTitleSize(int protocolNavTitleSize)        | 设置协议Web页面导航栏标题大小，单位sp     |
-| setProtocolPageNavTitleDpSize(int protocolNavTitleDpSize)    | 设置协议Web页面导航栏标题大小，单位dp     |
-| setProtocolPageNavBackIconWidth(int protocolNavBackIconWidth) | 设置协议Web页面导航栏返回按钮宽度，单位dp |
-| setProtocolPageNavBackIconHeight(int protocolNavBackIconHeight) | 设置协议Web页面导航栏返回按钮高度，单位dp |
+| 方法                                                         | 说明                                                         |
+| :----------------------------------------------------------- | ------------------------------------------------------------ |
+| setProtocolPageNavTitle(String protocolNavTitle)             | 设置协议Web页面导航栏标题，如果需要根据不同运营商设置不同标题，可使用下面重载接口 |
+| setProtocolPageNavTitle(String cmProtocolNavTitle, String cuProtocolNavTitle, String ctProtocolNavTitle) | 设置协议Web页面导航栏标题，可针对不同运营商单独设置          |
+| setProtocolPageNavTitleColor(int protocolNavTitleColor)      | 设置协议Web页面导航栏标题颜色                                |
+| setProtocolPageNavBackIcon(String protocolNavBackIcon)       | 设置协议Web页面导航栏返回图标                                |
+| setProtocolPageNavColor(int protocolNavColor)                | 设置协议Web页面导航栏颜色                                    |
+| setProtocolPageNavHeight(int protocolNavHeight)              | 设置协议Web页面导航栏高度                                    |
+| setProtocolPageNavTitleSize(int protocolNavTitleSize)        | 设置协议Web页面导航栏标题大小，单位sp                        |
+| setProtocolPageNavTitleDpSize(int protocolNavTitleDpSize)    | 设置协议Web页面导航栏标题大小，单位dp                        |
+| setProtocolPageNavBackIconWidth(int protocolNavBackIconWidth) | 设置协议Web页面导航栏返回按钮宽度，单位dp                    |
+| setProtocolPageNavBackIconHeight(int protocolNavBackIconHeight) | 设置协议Web页面导航栏返回按钮高度，单位dp                    |
 
 
 ### 5.12 其它
